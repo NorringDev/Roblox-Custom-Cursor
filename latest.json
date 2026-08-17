@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "notes": "Initial release",
+  "pub_date": "2026-08-17T00:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "PASTE_SIGNATURE_FROM_sig_FILE_HERE",
+      "url": "https://github.com/DIT-NIT/roblox-crosshair-manager/releases/download/v1.0.0/Roblox Crosshair Manager_1.0.0_x64-setup.exe"
+    }
+  }
+}

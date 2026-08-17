@@ -1,0 +1,14 @@
+node_modules/
+dist/
+target/
+src-tauri/gen/
+*.exe
+*.msi
+*.msi.sig
+*.exe.sig
+*.nsis.zip
+*.nsis.zip.sig
+.env
+.DS_Store
+Thumbs.db
+crosshair-update.key
