@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -6,6 +7,7 @@ import {
   Target,
   Sparkles,
 } from "lucide-react";
+import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
 import { cn } from "../../lib/utils";
 
@@ -19,6 +21,11 @@ const navItems = [
 
 export function Sidebar() {
   const { currentPage, setPage } = useUIStore();
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    getVersion().then(setVersion).catch(() => {});
+  }, []);
 
   return (
     <aside className="w-60 h-full bg-surface-950 border-r border-surface-800/50 flex flex-col shrink-0">
@@ -62,7 +69,7 @@ export function Sidebar() {
         <p className="text-[10px] text-surface-600 text-center">
           Roblox Crosshair Manager
         </p>
-        <p className="text-[10px] text-surface-700 text-center">v1.0.0</p>
+        <p className="text-[10px] text-surface-700 text-center">v{version}</p>
       </div>
     </aside>
   );
