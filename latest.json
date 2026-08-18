@@ -1,11 +1,11 @@
 {
-  "version": "1.1.6",
-  "notes": "Added Line, Rectangle, and Circle shape tools with rubber-band preview. Brush cursor preview in editor.",
-  "pub_date": "2026-08-18T14:30:00Z",
+  "version": "1.1.7",
+  "notes": "Improved circle tool (midpoint ellipse algorithm) + faster drawing performance",
+  "pub_date": "2026-08-18T14:50:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV1B6MVpaWmJDVkUvaHFIWjBJSXVDL2czQlNxU3lPR3lXaHQyQTZXajVmRUcwQWtrbCs5NTVwYW41N2dwQWlTVTJMUEd0Y0c1L3BVUElKTGdGS1crMWdvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDY3NzA1CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS42X3g2NC1zZXR1cC5leGUKY3hGaU5JOEorMS9SM1U4UEZ1QXo0eFVxKzdKMkRFYTVSclZBb1N4MGdpUy93ZWs0M1hjVHZ6T2k4ODFZaTltK1orZXVSUmg1L3RtcnNIeWFuMHZtQ3c9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.6/Roblox.Crosshair.Manager_1.1.6_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0x6ZTBTSDY5aWt4SHNQdlQ2UXB5THN2Q2JOUUlvblhWaUJXVmlqUURJSVpsYUdidTNPRXBId1plSE94SlB5U2tpSmtnQndtdUZmeXVDWUZ2Qm9Ja3djPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDY5MjMzCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS43X3g2NC1zZXR1cC5leGUKUnp2ZkgzdWtKcG52d0RzYmNMREdNYjFpZzg4cHRLaEVzTVMrZndzUjU2T2grYnBEcGdpS0xTWlRBeWdoRVl3dDBodDdrKytwYTdOQ1pxWGdHUVpFRFE9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.7/Roblox.Crosshair.Manager_1.1.7_x64-setup.exe"
     }
   }
 }
