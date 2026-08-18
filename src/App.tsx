@@ -32,7 +32,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const CURRENT_VERSION = "1.1.4";
+    const CURRENT_VERSION = "1.1.5";
     const lastSeen = localStorage.getItem("whatsnew_version");
     if (lastSeen !== CURRENT_VERSION) {
       setShowWhatsNew(true);

@@ -8,7 +8,9 @@ interface WhatsNewModalProps {
 }
 
 const latestChanges = [
-  "Fixed Current badge — v1.1.3 now shows as current",
+  "Removed update log page — replaced with a clean startup popup",
+  "Added What's New modal on first launch of each version",
+  "Silenced updater signature errors — no more scary error messages",
 ];
 
 export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
@@ -46,7 +48,7 @@ export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-brand-400" />
                 <h2 className="text-sm font-semibold text-surface-100">
-                  What's New in v1.1.4
+                  What's New in v1.1.5
                 </h2>
               </div>
               <button
