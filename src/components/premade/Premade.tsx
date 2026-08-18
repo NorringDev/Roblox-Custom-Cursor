@@ -60,7 +60,6 @@ function LazyPreview({ id, name }: { id: string; name: string }) {
           src={src}
           alt={name}
           className="w-16 h-16 object-contain"
-          style={{ imageRendering: "pixelated" }}
         />
       ) : loading ? (
         <RefreshCw size={16} className="animate-spin text-surface-600" />
@@ -111,7 +110,6 @@ function LazyThumbnail({ id, name }: { id: string; name: string }) {
           src={src}
           alt={name}
           className="w-full h-full object-contain"
-          style={{ imageRendering: "pixelated" }}
         />
       ) : (
         <CrosshairIcon size={18} className="text-brand-400" />

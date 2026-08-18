@@ -1,11 +1,11 @@
 {
-  "version": "1.0.5",
-  "notes": "Dynamic version display + tester credit",
-  "pub_date": "2026-08-17T22:15:00Z",
+  "version": "1.0.6",
+  "notes": "Update log page + smoother premade previews",
+  "pub_date": "2026-08-18T00:15:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0xaV0t5djlpdlIySmRBdDRETVpTZWNERTloeHdGRkFpSWI2U3lXdXllaVVEb0RJYzdhOTc4bUJGNUhXRy84ekRhWi9pY3RTZG0rSTc3NnhYSnJqYXdjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDA1ODczCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMC41X3g2NC1zZXR1cC5leGUKUjNvMGhGalRSbVZHVTZEWEV2WnRHcnVhUkNiT2xDVEJjREVhZ2N1L2hpNXhyNjhNd0F2NS9QZ0laM2s3NFZDalJVeXFULytYN2pCdDNkNTN2Y05jQXc9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.0.5/Roblox.Crosshair.Manager_1.0.5_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0d2U1JVcWhuVmJiSkd4SnA1OG52d2gxY2R1TERZVFZlWngzZ3dqWnVTRnM0SEplbnF5dHVGR0N1eGtCNk5iWFpCYTRqWmF6aWRLSE5XQkR6RWJNTFFZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDE0NzU2CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMC42X3g2NC1zZXR1cC5leGUKWnlRZVZ5WjdRb1g3V0d3ZTJTWWpDalhnVnUwdDRPWmJSQ1VEeHRDYVZ1YjJLWmZxYUtjVUNKR2g2bXdRMVcrbmVOekhTUE5qYnB2aEdYRFNSWjdzQnc9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.0.6/Roblox.Crosshair.Manager_1.0.6_x64-setup.exe"
     }
   }
 }

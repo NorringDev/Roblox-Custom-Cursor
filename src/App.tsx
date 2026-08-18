@@ -5,6 +5,7 @@ import { Library } from "./components/library/Library";
 import { Premade } from "./components/premade/Premade";
 import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
+import { Updates } from "./components/updates/Updates";
 import { ToastContainer } from "./components/ui/Toast";
 import { useUIStore } from "./stores/uiStore";
 import * as api from "./lib/tauri";
@@ -63,6 +64,8 @@ function App() {
         return <Premade />;
       case "settings":
         return <Settings />;
+      case "updates":
+        return <Updates />;
       case "credits":
         return <Credits />;
       default:

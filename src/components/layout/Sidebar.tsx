@@ -6,6 +6,7 @@ import {
   Heart,
   Target,
   Sparkles,
+  History,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
@@ -15,6 +16,7 @@ const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "premade", label: "Premade", icon: Sparkles },
+  { id: "updates", label: "Updates", icon: History },
   { id: "settings", label: "Settings", icon: Settings },
   { id: "credits", label: "Credits", icon: Heart },
 ];
