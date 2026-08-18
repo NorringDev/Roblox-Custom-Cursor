@@ -63,31 +63,26 @@ fn render_emote_bg(
 
     let border_rgba = parse_color(border_color);
 
-    if border_w > 0 {
-        for py in 0..canvas_size {
-            for px in 0..canvas_size {
-                output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
-            }
-        }
-    }
-
     for py in 0..canvas_size {
         for px in 0..canvas_size {
             let dx = px as f64 - cx;
             let dy = py as f64 - cy;
             let dist = (dx * dx + dy * dy).sqrt();
+            let outer_radius = radius + border_w as f64;
 
-            if dist <= radius + border_w as f64 {
-                if border_w > 0 && dist > radius {
-                    output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
-                } else if dist <= radius {
-                    let src_x = (px as f64 - draw_x) / scale;
-                    let src_y = (py as f64 - draw_y) / scale;
-                    if src_x >= 0.0 && src_x < img_w && src_y >= 0.0 && src_y < img_h {
-                        let pixel = sample_bilinear(&img, src_x, src_y);
-                        output.put_pixel(px, py, pixel);
-                    }
-                }
+            if dist > outer_radius {
+                continue;
+            }
+
+            if border_w > 0 && dist > radius {
+                output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
+            } else {
+                let src_x = (px as f64 - draw_x) / scale;
+                let src_y = (py as f64 - draw_y) / scale;
+                let clamped_x = src_x.max(0.0).min(img_w - 1.0);
+                let clamped_y = src_y.max(0.0).min(img_h - 1.0);
+                let pixel = sample_bilinear(&img, clamped_x, clamped_y);
+                output.put_pixel(px, py, pixel);
             }
         }
     }
