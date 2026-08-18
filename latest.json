@@ -1,11 +1,11 @@
 {
-  "version": "1.1.8",
-  "notes": "Smooth drawing + fixed circle tool",
-  "pub_date": "2026-08-18T15:10:00Z",
+  "version": "1.1.9",
+  "notes": "Complete rewrite of the drawing engine — smooth, professional, 10 tools",
+  "pub_date": "2026-08-18T15:25:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0lzaVErYkJwQjVlenBVdC9hMkFQVytiSHVadkNINDhDaHozMVRqOS9tUzVISUVIRXRjTXo3TjNjQWNqUG5PVnZKbFZQVXYwQWJaSkhkTTd2anBwYlFRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDcwNTEyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS44X3g2NC1zZXR1cC5leGUKYUV0aEU5Vk5GZmlMTVYzWWkzWnFnSWtWZ2FmcXIzc2R5REQ0bW5zMW5URUtGc3dVVlNoQ0ZXTUxtMWhLYW4rcFZOQzVaV05JcUhBU0NTS3FxT291RFE9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.8/Roblox.Crosshair.Manager_1.1.8_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0dGNEJKY29Cc2REcHJCc0dsWitLb2gxTkdvVThOQ3RhaWY3QlJ6NitmRFJJcmI2Y1BsakU2dmN1SDBQS3N4bWpmR3JSUmtHTDZLSWtTVEI4RlJlNWdJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDcyMDQyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS45X3g2NC1zZXR1cC5leGUKRktibzNYUGloMmJvS2k4MkFVNkZoR0ZmdnRSaGNNVHBIQ0ZybTM1VENMSnZlZk9HVWdmL3JWdi8zY0ZWZzVGeDFwd3V0aWRrN1ltUFlFeXNmUk94Qnc9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.9/Roblox.Crosshair.Manager_1.1.9_x64-setup.exe"
     }
   }
 }
