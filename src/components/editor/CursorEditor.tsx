@@ -122,18 +122,23 @@ export function CursorEditor() {
   };
 
   const drawPixel = (ctx: CanvasRenderingContext2D, x: number, y: number, c: string, size: number) => {
-    const [r, g, b, a] = hexToRgb(c);
     const half = Math.floor(size / 2);
-    for (let dx = -half; dx <= half; dx++) {
-      for (let dy = -half; dy <= half; dy++) {
-        const px = x + dx;
-        const py = y + dy;
-        if (px >= 0 && px < CANVAS_SIZE && py >= 0 && py < CANVAS_SIZE) {
-          ctx.fillStyle = c === "eraser" ? "rgba(0,0,0,0)" : c;
-          if (c === "eraser") {
+    if (c === "eraser") {
+      for (let dx = -half; dx <= half; dx++) {
+        for (let dy = -half; dy <= half; dy++) {
+          const px = x + dx, py = y + dy;
+          if (px >= 0 && px < CANVAS_SIZE && py >= 0 && py < CANVAS_SIZE) {
             ctx.clearRect(px, py, 1, 1);
-          } else {
-            ctx.fillStyle = `rgba(${r},${g},${b},${a / 255})`;
+          }
+        }
+      }
+    } else {
+      const colorStr = prepareColor(c)!;
+      ctx.fillStyle = colorStr;
+      for (let dx = -half; dx <= half; dx++) {
+        for (let dy = -half; dy <= half; dy++) {
+          const px = x + dx, py = y + dy;
+          if (px >= 0 && px < CANVAS_SIZE && py >= 0 && py < CANVAS_SIZE) {
             ctx.fillRect(px, py, 1, 1);
           }
         }
@@ -152,12 +157,29 @@ export function CursorEditor() {
     }
   };
 
+  const prepareColor = (c: string) => {
+    if (c === "eraser") return null;
+    const [r, g, b, a] = hexToRgb(c);
+    return `rgba(${r},${g},${b},${a / 255})`;
+  };
+
+  const setPixelFast = (ctx: CanvasRenderingContext2D, x: number, y: number, colorStr: string | null) => {
+    if (x < 0 || x >= CANVAS_SIZE || y < 0 || y >= CANVAS_SIZE) return;
+    if (!colorStr) {
+      ctx.clearRect(x, y, 1, 1);
+    } else {
+      ctx.fillStyle = colorStr;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  };
+
   const drawLinePixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
+    const colorStr = prepareColor(c);
     const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
     const dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
     let err = dx + dy;
     while (true) {
-      setPixel(ctx, x0, y0, c);
+      setPixelFast(ctx, x0, y0, colorStr);
       if (x0 === x1 && y0 === y1) break;
       const e2 = 2 * err;
       if (e2 >= dy) { err += dy; x0 += sx; }
@@ -166,30 +188,103 @@ export function CursorEditor() {
   };
 
   const drawRectPixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
+    const colorStr = prepareColor(c);
     const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
     const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
     for (let x = minX; x <= maxX; x++) {
-      setPixel(ctx, x, minY, c);
-      setPixel(ctx, x, maxY, c);
+      setPixelFast(ctx, x, minY, colorStr);
+      setPixelFast(ctx, x, maxY, colorStr);
     }
     for (let y = minY; y <= maxY; y++) {
-      setPixel(ctx, minX, y, c);
-      setPixel(ctx, maxX, y, c);
+      setPixelFast(ctx, minX, y, colorStr);
+      setPixelFast(ctx, maxX, y, colorStr);
     }
   };
 
   const drawCirclePixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
-    const cx = Math.round((x0 + x1) / 2);
-    const cy = Math.round((y0 + y1) / 2);
+    const colorStr = prepareColor(c);
+    const cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
     const rx = Math.abs(x1 - x0) / 2;
     const ry = Math.abs(y1 - y0) / 2;
-    if (rx === 0 && ry === 0) { setPixel(ctx, cx, cy, c); return; }
-    const steps = Math.max(Math.round(Math.PI * 2 * Math.max(rx, ry)), 36);
-    for (let i = 0; i <= steps; i++) {
-      const angle = (i / steps) * 2 * Math.PI;
-      const px = Math.round(cx + rx * Math.cos(angle));
-      const py = Math.round(cy + ry * Math.sin(angle));
-      setPixel(ctx, px, py, c);
+
+    if (rx < 0.5 && ry < 0.5) {
+      setPixelFast(ctx, Math.round(cx), Math.round(cy), colorStr);
+      return;
+    }
+
+    if (rx >= ry) {
+      let x = Math.round(rx);
+      let y = 0;
+      let d1 = ry * ry - rx * rx * ry + rx * rx / 4;
+      let dx = 2 * ry * ry * x;
+      let dy = 0;
+      while (dx >= dy) {
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
+        y++;
+        dy += 2 * rx * rx;
+        if (d1 < 0) {
+          d1 += ry * ry + dy;
+        } else {
+          x--;
+          dx -= 2 * ry * ry;
+          d1 += ry * ry - dx + dy;
+        }
+      }
+      let d2 = ry * ry * (x * x + x + 0.25) + rx * rx * (y - 1) * (y - 1) - rx * rx * ry * ry;
+      while (y <= Math.round(ry)) {
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
+        y++;
+        if (d2 > 0) {
+          d2 += rx * rx - dx;
+        } else {
+          x--;
+          dx -= 2 * ry * ry;
+          d2 += rx * ry * ry - dx;
+        }
+      }
+    } else {
+      let y = Math.round(ry);
+      let x = 0;
+      let d1 = rx * rx - ry * ry * rx + ry * ry / 4;
+      let dy = 2 * rx * rx * y;
+      let dx = 0;
+      while (dy >= dx) {
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
+        x++;
+        dx += 2 * ry * ry;
+        if (d1 < 0) {
+          d1 += rx * rx + dx;
+        } else {
+          y--;
+          dy -= 2 * rx * rx;
+          d1 += rx * rx - dy + dx;
+        }
+      }
+      let d2 = rx * rx * (y * y + y + 0.25) + ry * ry * (x - 1) * (x - 1) - ry * ry * rx * rx;
+      while (x <= Math.round(rx)) {
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
+        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
+        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
+        x++;
+        if (d2 > 0) {
+          d2 += ry * ry - dy;
+        } else {
+          y--;
+          dy -= 2 * rx * rx;
+          d2 += ry * rx * rx - dy;
+        }
+      }
     }
   };
 
