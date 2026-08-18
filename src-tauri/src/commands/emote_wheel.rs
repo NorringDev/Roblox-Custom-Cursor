@@ -71,9 +71,7 @@ fn render_emote_bg(
 
             if dist <= radius + border_w as f64 {
                 if border_w > 0 && dist > radius {
-                    let t = ((dist - radius) / border_w as f64).min(1.0);
-                    let alpha = ((1.0 - t) * border_rgba[3] as f64).round() as u8;
-                    output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], alpha]));
+                    output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
                 } else if dist <= radius {
                     let src_x = (px as f64 - draw_x) / scale;
                     let src_y = (py as f64 - draw_y) / scale;
