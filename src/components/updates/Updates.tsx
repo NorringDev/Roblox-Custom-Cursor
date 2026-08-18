@@ -91,13 +91,8 @@ const updates: UpdateEntry[] = [
   },
 ];
 
-function UpdateItem({ entry }: { entry: UpdateEntry }) {
+function UpdateItem({ entry, appVersion }: { entry: UpdateEntry; appVersion: string }) {
   const [expanded, setExpanded] = useState(false);
-  const [appVersion, setAppVersion] = useState("");
-
-  useEffect(() => {
-    getVersion().then(setAppVersion).catch(() => {});
-  }, []);
 
   const isCurrent = appVersion === entry.version;
 
@@ -139,6 +134,12 @@ function UpdateItem({ entry }: { entry: UpdateEntry }) {
 }
 
 export function Updates() {
+  const [appVersion, setAppVersion] = useState("");
+
+  useEffect(() => {
+    getVersion().then(setAppVersion).catch(() => {});
+  }, []);
+
   return (
     <div className="space-y-6">
       <Header title="Update Log" subtitle="Version history and changelogs" />
@@ -147,11 +148,11 @@ export function Updates() {
         <div className="flex items-center gap-2 px-4 py-3">
           <History size={16} className="text-surface-500" />
           <p className="text-xs text-surface-500">
-            {updates.length} releases
+            {updates.length} releases — v{appVersion || "..."}
           </p>
         </div>
         {updates.map((entry) => (
-          <UpdateItem key={entry.version} entry={entry} />
+          <UpdateItem key={entry.version} entry={entry} appVersion={appVersion} />
         ))}
       </Card>
     </div>

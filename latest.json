@@ -1,11 +1,11 @@
 {
-  "version": "1.0.9",
-  "notes": "Fixed single-click drawing in cursor editor",
-  "pub_date": "2026-08-18T00:40:00Z",
+  "version": "1.1.0",
+  "notes": "Fixed Current badge in update log + single-click drawing",
+  "pub_date": "2026-08-18T00:50:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0NiUHRjTjg1NU1Ib3VqUlZVNmNjZUxJMDB4cGo4cTB5cjllcHRNR3k2K2w3VWptcWhUbHRQd2VXYXlGeVQ3a2U2SjJYS2JFYU1oLzAwUTRaVUxSSFE0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDE3NDMyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMC45X3g2NC1zZXR1cC5leGUKejcyQzdGL2UzY0FrQnhGSUxKUktFMlg0UzBlODBoM29JUG8vMi81S1d2dWFqRnV6bCtYTDVhRnR6UWg5d0NqSnltVWR3YVQyOG1MbzAzajdSYnd2REE9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.0.9/Roblox.Crosshair.Manager_1.0.9_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0w3TFBLU0hWWVRxTzg2YWcvOXA5eW44LzRNNE1XYTBUWUNadDFKNExtL0xVYUczMGl6MFFaR3h1UTNoRlVCa1lUT2Vpc2ZQdkUycitUWnZCVElnZkFBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDE3OTI3CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS4wX3g2NC1zZXR1cC5leGUKaE9yYzZrZEN5TFNnOGZzb0lYWEUxNmtZMnBjdWRGRm12K0I5d2dUMjRhanBSeW8rNVh2QWlPRitjb1NMYkJOUVMybjFZazd5N3FvRFUzQ2lSRHJsQWc9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.0/Roblox.Crosshair.Manager_1.1.0_x64-setup.exe"
     }
   }
 }
