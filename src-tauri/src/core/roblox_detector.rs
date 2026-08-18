@@ -8,7 +8,7 @@ const LOCKED_CURSOR_FILENAME: &str = "MouseLockedCursor.png";
 const CURSOR_SUBPATH: &str = "content\\textures\\Cursors\\KeyboardMouse";
 const TEXTURES_SUBPATH: &str = "content\\textures";
 const EMOTE_BG_SUBPATH: &str = "content\\textures\\ui\\Emotes\\Large";
-const EMOTE_BG_FILENAME: &str = "SegmentedCircle";
+const EMOTE_BG_FILENAME: &str = "SegmentedCircle.png";
 
 pub fn get_roblox_versions_dir(custom_path: Option<&str>) -> Option<PathBuf> {
     if let Some(p) = custom_path {
