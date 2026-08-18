@@ -7,6 +7,7 @@ import {
   Target,
   Sparkles,
   PenTool,
+  Clock,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
@@ -17,6 +18,7 @@ const navItems = [
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "editor", label: "Create Cursor (Beta)", icon: PenTool },
   { id: "premade", label: "Premade", icon: Sparkles },
+  { id: "coming-soon", label: "More Coming Soon", icon: Clock },
   { id: "settings", label: "Settings", icon: Settings },
   { id: "credits", label: "Credits", icon: Heart },
 ];
@@ -49,15 +51,19 @@ export function Sidebar() {
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = currentPage === item.id;
+          const isComingSoon = item.id === "coming-soon";
           return (
             <button
               key={item.id}
-              onClick={() => setPage(item.id)}
+              onClick={() => !isComingSoon && setPage(item.id)}
+              disabled={isComingSoon}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer",
-                active
-                  ? "bg-brand-600/15 text-brand-400 border border-brand-600/20"
-                  : "text-surface-400 hover:text-surface-200 hover:bg-surface-800/50 border border-transparent"
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
+                isComingSoon
+                  ? "text-surface-600 cursor-default border border-transparent opacity-50"
+                  : active
+                    ? "bg-brand-600/15 text-brand-400 border border-brand-600/20 cursor-pointer"
+                    : "text-surface-400 hover:text-surface-200 hover:bg-surface-800/50 border border-transparent cursor-pointer"
               )}
             >
               <Icon size={18} />
