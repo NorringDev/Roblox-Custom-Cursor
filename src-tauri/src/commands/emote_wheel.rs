@@ -44,21 +44,22 @@ fn render_emote_bg(
         .map_err(|e| format!("Failed to open image: {}", e))?;
     let img = img.to_rgba8();
 
-    let canvas_size: u32 = 512;
+    let border_w = if border_width > 0 { border_width } else { 0 };
+    let canvas_size: u32 = 512 + border_w * 2;
     let mut output = RgbaImage::new(canvas_size, canvas_size);
 
     let img_w = img.width() as f64;
     let img_h = img.height() as f64;
-    let base_scale = (canvas_size as f64 / img_w).max(canvas_size as f64 / img_h);
+    let base_scale = (512.0 / img_w).max(512.0 / img_h);
     let scale = base_scale * zoom;
     let draw_w = img_w * scale;
     let draw_h = img_h * scale;
-    let draw_x = (canvas_size as f64 - draw_w) / 2.0 + offset_x;
-    let draw_y = (canvas_size as f64 - draw_h) / 2.0 + offset_y;
+    let draw_x = (512.0 - draw_w) / 2.0 + offset_x + border_w as f64;
+    let draw_y = (512.0 - draw_h) / 2.0 + offset_y + border_w as f64;
 
     let cx = canvas_size as f64 / 2.0;
     let cy = canvas_size as f64 / 2.0;
-    let radius = canvas_size as f64 / 2.0;
+    let radius = 512.0 / 2.0;
 
     let border_rgba = parse_color(border_color);
 
@@ -68,14 +69,12 @@ fn render_emote_bg(
             let dy = py as f64 - cy;
             let dist = (dx * dx + dy * dy).sqrt();
 
-            if dist <= radius {
-                let inner_radius = radius - border_width as f64;
-
-                if border_width > 0 && dist > inner_radius {
-                    let t = ((dist - inner_radius) / border_width as f64).min(1.0);
+            if dist <= radius + border_w as f64 {
+                if border_w > 0 && dist > radius {
+                    let t = ((dist - radius) / border_w as f64).min(1.0);
                     let alpha = ((1.0 - t) * border_rgba[3] as f64).round() as u8;
                     output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], alpha]));
-                } else {
+                } else if dist <= radius {
                     let src_x = (px as f64 - draw_x) / scale;
                     let src_y = (py as f64 - draw_y) / scale;
                     if src_x >= 0.0 && src_x < img_w && src_y >= 0.0 && src_y < img_h {
