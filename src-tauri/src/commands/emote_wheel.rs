@@ -63,7 +63,7 @@ pub fn apply_emote_bg(
         .map_err(|e| format!("Failed to open image: {}", e))?;
     let img = img.to_rgba8();
 
-    let canvas_size: u32 = 256;
+    let canvas_size: u32 = 512;
     let mut output = image::RgbaImage::new(canvas_size, canvas_size);
 
     let img_w = img.width() as f64;
