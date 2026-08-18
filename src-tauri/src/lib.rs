@@ -41,6 +41,9 @@ pub fn run() {
             commands::premade::get_premade_crosshairs,
             commands::premade::get_premade_preview,
             commands::premade::apply_premade_crosshair,
+            commands::emote_wheel::apply_emote_bg,
+            commands::emote_wheel::restore_emote_bg,
+            commands::emote_wheel::get_emote_bg_status,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

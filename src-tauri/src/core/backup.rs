@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 use chrono::Utc;
 use crate::models::BackupEntry;
-use crate::core::roblox_detector::{get_cursor_path, get_far_cursor_path, get_locked_cursor_path};
+use crate::core::roblox_detector::{get_cursor_path, get_far_cursor_path, get_locked_cursor_path, get_emote_bg_path};
 
 const BACKUP_DIR_NAME: &str = "RobloxCrosshairManager";
 
@@ -182,6 +182,45 @@ pub fn restore_backup(backup_id: &str, version_path: &Path) -> Result<(), String
     if backup_locked.exists() {
         std::fs::copy(&backup_locked, &locked_cursor_dest)
             .map_err(|e| format!("Failed to restore from backup: {}", e))?;
+    }
+    Ok(())
+}
+
+pub fn save_emote_bg_original_if_needed(version_path: &Path) -> Result<(), String> {
+    ensure_backup_dirs()?;
+    let originals_dir = get_originals_dir();
+    let marker = originals_dir.join("emote_bg_saved.flag");
+    if marker.exists() {
+        return Ok(());
+    }
+    let emote_bg = get_emote_bg_path(version_path);
+    if emote_bg.exists() {
+        let ext = emote_bg.extension().unwrap_or_default().to_string_lossy();
+        let dest = originals_dir.join(format!("SegmentedCircle.{}", ext));
+        std::fs::copy(&emote_bg, &dest)
+            .map_err(|e| format!("Failed to backup original emote bg: {}", e))?;
+    }
+    std::fs::write(&marker, "saved")
+        .map_err(|e| format!("Failed to write emote bg backup marker: {}", e))?;
+    Ok(())
+}
+
+pub fn restore_emote_bg_original(version_path: &Path) -> Result<(), String> {
+    let originals_dir = get_originals_dir();
+    let emote_bg_dest = get_emote_bg_path(version_path);
+
+    for ext in &["png", "jpg", "jpeg", "webp", "dds"] {
+        let original = originals_dir.join(format!("SegmentedCircle.{}", ext));
+        if original.exists() {
+            std::fs::copy(&original, &emote_bg_dest)
+                .map_err(|e| format!("Failed to restore emote bg: {}", e))?;
+            return Ok(());
+        }
+    }
+
+    if emote_bg_dest.exists() {
+        std::fs::remove_file(&emote_bg_dest)
+            .map_err(|e| format!("Failed to remove custom emote bg: {}", e))?;
     }
     Ok(())
 }

@@ -8,6 +8,7 @@ import {
   Sparkles,
   PenTool,
   Clock,
+  Circle,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
@@ -17,6 +18,7 @@ const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "editor", label: "Create Cursor (Beta)", icon: PenTool },
+  { id: "emote-wheel", label: "Emote Wheel", icon: Circle },
   { id: "premade", label: "Premade", icon: Sparkles },
   { id: "coming-soon", label: "More Coming Soon", icon: Clock },
   { id: "settings", label: "Settings", icon: Settings },

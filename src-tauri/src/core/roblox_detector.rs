@@ -7,6 +7,8 @@ const FAR_CURSOR_FILENAME: &str = "ArrowFarCursor.png";
 const LOCKED_CURSOR_FILENAME: &str = "MouseLockedCursor.png";
 const CURSOR_SUBPATH: &str = "content\\textures\\Cursors\\KeyboardMouse";
 const TEXTURES_SUBPATH: &str = "content\\textures";
+const EMOTE_BG_SUBPATH: &str = "content\\textures\\ui\\Emotes\\Large";
+const EMOTE_BG_FILENAME: &str = "SegmentedCircle";
 
 pub fn get_roblox_versions_dir(custom_path: Option<&str>) -> Option<PathBuf> {
     if let Some(p) = custom_path {
@@ -128,5 +130,20 @@ pub fn ensure_cursor_dir(version_path: &Path) -> Result<PathBuf, String> {
     let dir = get_cursor_dir(version_path);
     std::fs::create_dir_all(&dir)
         .map_err(|e| format!("Failed to create cursor directory: {}", e))?;
+    Ok(dir)
+}
+
+pub fn get_emote_bg_dir(version_path: &Path) -> PathBuf {
+    version_path.join(EMOTE_BG_SUBPATH)
+}
+
+pub fn get_emote_bg_path(version_path: &Path) -> PathBuf {
+    get_emote_bg_dir(version_path).join(EMOTE_BG_FILENAME)
+}
+
+pub fn ensure_emote_bg_dir(version_path: &Path) -> Result<PathBuf, String> {
+    let dir = get_emote_bg_dir(version_path);
+    std::fs::create_dir_all(&dir)
+        .map_err(|e| format!("Failed to create emote bg directory: {}", e))?;
     Ok(dir)
 }

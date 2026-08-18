@@ -95,3 +95,17 @@ export async function saveDrawnPngCrosshair(
 ): Promise<{ success: boolean; message: string; savedPath: string }> {
   return invoke("save_drawn_crosshair", { pngData, name });
 }
+
+export async function applyEmoteBg(
+  sourcePath: string
+): Promise<{ success: boolean; message: string }> {
+  return invoke("apply_emote_bg", { sourcePath });
+}
+
+export async function restoreEmoteBg(): Promise<{ success: boolean; message: string }> {
+  return invoke("restore_emote_bg");
+}
+
+export async function getEmoteBgStatus(): Promise<boolean> {
+  return invoke("get_emote_bg_status");
+}
