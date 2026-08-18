@@ -45,21 +45,24 @@ fn render_emote_bg(
     let img = img.to_rgba8();
 
     let border_w = if border_width > 0 { border_width } else { 0 };
-    let canvas_size: u32 = 512 + border_w * 2;
+    let inner_size: u32 = 512;
+    let canvas_size: u32 = inner_size + border_w * 2;
     let mut output = RgbaImage::new(canvas_size, canvas_size);
 
     let img_w = img.width() as f64;
     let img_h = img.height() as f64;
-    let base_scale = (512.0 / img_w).max(512.0 / img_h);
+    let base_scale = (inner_size as f64 / img_w).max(inner_size as f64 / img_h);
     let scale = base_scale * zoom;
     let draw_w = img_w * scale;
     let draw_h = img_h * scale;
-    let draw_x = (512.0 - draw_w) / 2.0 + offset_x + border_w as f64;
-    let draw_y = (512.0 - draw_h) / 2.0 + offset_y + border_w as f64;
 
     let cx = canvas_size as f64 / 2.0;
     let cy = canvas_size as f64 / 2.0;
-    let radius = 512.0 / 2.0;
+    let radius = inner_size as f64 / 2.0;
+    let outer_radius = radius + border_w as f64;
+
+    let draw_x = cx + offset_x - draw_w / 2.0;
+    let draw_y = cy + offset_y - draw_h / 2.0;
 
     let border_rgba = parse_color(border_color);
 
@@ -68,7 +71,6 @@ fn render_emote_bg(
             let dx = px as f64 - cx;
             let dy = py as f64 - cy;
             let dist = (dx * dx + dy * dy).sqrt();
-            let outer_radius = radius + border_w as f64;
 
             if dist > outer_radius {
                 continue;
