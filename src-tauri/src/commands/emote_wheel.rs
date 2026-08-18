@@ -1,7 +1,35 @@
 use std::path::PathBuf;
-use image::GenericImageView;
+use image::{Rgba, RgbaImage};
 use crate::core::{roblox_detector, backup, image_validator};
 use crate::models::CommandResult;
+
+fn lerp(a: f64, b: f64, t: f64) -> f64 {
+    a + (b - a) * t
+}
+
+fn sample_bilinear(img: &RgbaImage, x: f64, y: f64) -> Rgba<u8> {
+    let w = img.width() as f64;
+    let h = img.height() as f64;
+    let x0 = x.floor().max(0.0).min(w - 1.0);
+    let y0 = y.floor().max(0.0).min(h - 1.0);
+    let x1 = (x0 + 1.0).min(w - 1.0);
+    let y1 = (y0 + 1.0).min(h - 1.0);
+    let fx = x - x.floor();
+    let fy = y - y.floor();
+
+    let p00 = img.get_pixel(x0 as u32, y0 as u32);
+    let p10 = img.get_pixel(x1 as u32, y0 as u32);
+    let p01 = img.get_pixel(x0 as u32, y1 as u32);
+    let p11 = img.get_pixel(x1 as u32, y1 as u32);
+
+    let mut result = [0u8; 4];
+    for c in 0..4 {
+        let top = lerp(p00[c] as f64, p10[c] as f64, fx);
+        let bot = lerp(p01[c] as f64, p11[c] as f64, fx);
+        result[c] = lerp(top, bot, fy).round() as u8;
+    }
+    Rgba(result)
+}
 
 #[tauri::command]
 pub fn apply_emote_bg(
@@ -33,6 +61,7 @@ pub fn apply_emote_bg(
 
     let img = image::open(&src)
         .map_err(|e| format!("Failed to open image: {}", e))?;
+    let img = img.to_rgba8();
 
     let canvas_size: u32 = 256;
     let mut output = image::RgbaImage::new(canvas_size, canvas_size);
@@ -62,9 +91,7 @@ pub fn apply_emote_bg(
                     && src_y >= 0.0
                     && src_y < img_h
                 {
-                    let sample_x = src_x.round() as u32;
-                    let sample_y = src_y.round() as u32;
-                    let pixel = img.get_pixel(sample_x, sample_y);
+                    let pixel = sample_bilinear(&img, src_x, src_y);
                     output.put_pixel(px, py, pixel);
                 }
             }
