@@ -12,6 +12,20 @@ interface UpdateEntry {
 
 const updates: UpdateEntry[] = [
   {
+    version: "1.1.2",
+    date: "2026-08-18",
+    changes: [
+      "Improved Current badge in update log",
+    ],
+  },
+  {
+    version: "1.1.1",
+    date: "2026-08-18",
+    changes: [
+      "Added v1.0.9 and v1.1.0 to update log",
+    ],
+  },
+  {
     version: "1.1.0",
     date: "2026-08-18",
     changes: [
@@ -105,10 +119,10 @@ const updates: UpdateEntry[] = [
   },
 ];
 
-function UpdateItem({ entry, appVersion }: { entry: UpdateEntry; appVersion: string }) {
-  const [expanded, setExpanded] = useState(() => appVersion.trim() === entry.version.trim());
+function UpdateItem({ entry, appVersion, isFirst }: { entry: UpdateEntry; appVersion: string; isFirst: boolean }) {
+  const [expanded, setExpanded] = useState(() => appVersion.trim() === entry.version.trim() || (isFirst && !appVersion));
 
-  const isCurrent = appVersion.trim() === entry.version.trim();
+  const isCurrent = appVersion.trim() === entry.version.trim() || (isFirst && appVersion.trim() > entry.version.trim());
 
   return (
     <div className="border border-surface-800/50 rounded-xl overflow-hidden">
@@ -165,8 +179,8 @@ export function Updates() {
             {updates.length} releases — v{appVersion || "..."}
           </p>
         </div>
-        {updates.map((entry) => (
-          <UpdateItem key={entry.version} entry={entry} appVersion={appVersion} />
+        {updates.map((entry, index) => (
+          <UpdateItem key={entry.version} entry={entry} appVersion={appVersion} isFirst={index === 0} />
         ))}
       </Card>
     </div>

@@ -1,11 +1,11 @@
 {
-  "version": "1.1.2",
-  "notes": "Improved Current badge in update log",
-  "pub_date": "2026-08-18T04:10:00Z",
+  "version": "1.1.3",
+  "notes": "Fixed Current badge — added missing v1.1.1 and v1.1.2 entries to update log",
+  "pub_date": "2026-08-18T04:25:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV09NU3RMQ2Y0V21wejVzbnYzcUxUREg5SzF5MEd2RUNzWjdiOG5yWE1PeDRJeEkvR1QrWE5TZUcxaGdxckRqc09mNFVRTnpvVGE4cmQremFDODBkY1FjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDE4ODkyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS4yX3g2NC1zZXR1cC5leGUKaG02MWcxL0cyd0JnaDkrYml2L2ZUS2VRL1RocnA3YkRKY2NvUXJnU3NEQlZUM0tWS3I3UFpHcUZITTN0aVE1NUtYb2VQS0dWMjQySUFWRkVhQ1hZQlE9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.2/Roblox.Crosshair.Manager_1.1.2_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0orVksya0I4Wk1rY0ZSdURJbHBqM1djd3VjcVF4L2czNTRvU0xzQjNPZGZKaERlV3k1Y05iUVNUUUhiMG1PdWJGY2k4a3hwTmY0dE1ONnBMUUl2QlFJPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDE5NDIyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS4zX3g2NC1zZXR1cC5leGUKNUhNK0wraXBlR000TXk2bFBmOHFJS29jeXhHMlZUNVI4STRxSGhGb1I2cjVOaWNENDR0V0Jsck0vTy8zcmhrZ0pTNmJjMnV6RGRKakljTWg2aE12Q0E9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.3/Roblox.Crosshair.Manager_1.1.3_x64-setup.exe"
     }
   }
 }
