@@ -50,6 +50,7 @@ export function CursorEditor() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
   const [saveName, setSaveName] = useState("");
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
   const lastPixel = useRef<{ x: number; y: number } | null>(null);
 
   const initCanvas = useCallback(() => {
@@ -242,9 +243,10 @@ export function CursorEditor() {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const pos = getPixelPos(e);
+    setCursorPos(pos);
     if (!isDrawing) return;
     if (tool === "eyedropper" || tool === "fill") return;
-    const pos = getPixelPos(e);
     if (!pos) return;
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -261,6 +263,11 @@ export function CursorEditor() {
     }
     setIsDrawing(false);
     lastPixel.current = null;
+  };
+
+  const handleCanvasLeave = () => {
+    handleMouseUp();
+    setCursorPos(null);
   };
 
   const handleClear = () => {
@@ -457,15 +464,38 @@ export function CursorEditor() {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
+              onMouseLeave={handleCanvasLeave}
               className="block"
               style={{
                 width: DISPLAY_SIZE,
                 height: DISPLAY_SIZE,
                 imageRendering: "pixelated",
-                cursor: tool === "eyedropper" ? "crosshair" : "default",
+                cursor: "none",
               }}
             />
+            {cursorPos && tool !== "eyedropper" && (
+              <div
+                className="absolute pointer-events-none border border-white/70 rounded-sm"
+                style={{
+                  width: brushSize * DISPLAY_SCALE,
+                  height: brushSize * DISPLAY_SCALE,
+                  left: cursorPos.x * DISPLAY_SCALE - (brushSize * DISPLAY_SCALE) / 2,
+                  top: cursorPos.y * DISPLAY_SCALE - (brushSize * DISPLAY_SCALE) / 2,
+                  boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
+                  mixBlendMode: "difference",
+                }}
+              />
+            )}
+            {cursorPos && tool === "eyedropper" && (
+              <div
+                className="absolute pointer-events-none w-5 h-5 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"
+                style={{
+                  left: cursorPos.x * DISPLAY_SCALE + DISPLAY_SCALE / 2,
+                  top: cursorPos.y * DISPLAY_SCALE + DISPLAY_SCALE / 2,
+                  boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
+                }}
+              />
+            )}
             {showGrid && (
               <svg
                 width={DISPLAY_SIZE}
