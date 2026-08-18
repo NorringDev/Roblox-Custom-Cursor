@@ -1,6 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { convertFileSrc } from "@tauri-apps/api/core";
+import { invoke, convertFileSrc } from "@tauri-apps/api/core";
 import {
   Upload,
   RotateCcw,
@@ -15,7 +14,6 @@ import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { useUIStore } from "../../stores/uiStore";
 import * as api from "../../lib/tauri";
-import { open } from "@tauri-apps/plugin-dialog";
 
 const CANVAS_SIZE = 300;
 
@@ -74,6 +72,7 @@ export function EmoteWheel() {
 
   const handlePickImage = async () => {
     try {
+      const { open } = await import("@tauri-apps/plugin-dialog");
       const selected = await open({
         multiple: false,
         filters: [
@@ -82,13 +81,18 @@ export function EmoteWheel() {
       });
       if (!selected) return;
 
-      const path = typeof selected === "string" ? selected : selected;
+      const path = Array.isArray(selected) ? selected[0] : selected;
+      if (!path) return;
+
       const img = new Image();
       img.onload = () => {
         setImageObj(img);
         setImageSrc(path);
         setZoom(1);
         setOffset({ x: 0, y: 0 });
+      };
+      img.onerror = () => {
+        addToast("error", "Failed to load image preview");
       };
       img.src = convertFileSrc(path);
     } catch (e) {
