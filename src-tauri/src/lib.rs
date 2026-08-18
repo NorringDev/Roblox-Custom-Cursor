@@ -33,6 +33,7 @@ pub fn run() {
             commands::library::delete_library_item,
             commands::library::rename_library_item,
             commands::library::clear_library,
+            commands::library::save_drawn_crosshair,
             commands::settings::get_settings,
             commands::settings::save_settings,
             commands::settings::validate_image,

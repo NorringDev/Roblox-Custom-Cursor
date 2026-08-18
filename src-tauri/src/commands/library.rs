@@ -118,6 +118,40 @@ pub fn rename_library_item(id: String, new_name: String) -> Result<crate::models
 }
 
 #[tauri::command]
+pub fn save_drawn_crosshair(
+    png_data: String,
+    name: String,
+) -> Result<ImportResult, String> {
+    use base64::Engine;
+
+    let decoded = base64::engine::general_purpose::STANDARD
+        .decode(&png_data)
+        .map_err(|e| format!("Invalid base64 data: {}", e))?;
+
+    let library_dir = ensure_library_dir()?;
+    let id = uuid::Uuid::new_v4().to_string();
+    let dest = library_dir.join(format!("{}.png", id));
+
+    std::fs::write(&dest, &decoded)
+        .map_err(|e| format!("Failed to save image: {}", e))?;
+
+    let meta_path = library_dir.join(format!("{}.json", id));
+    let meta = serde_json::json!({
+        "id": id,
+        "name": name,
+        "original_path": "drawn",
+    });
+    std::fs::write(&meta_path, serde_json::to_string_pretty(&meta).unwrap())
+        .map_err(|e| format!("Failed to save metadata: {}", e))?;
+
+    Ok(ImportResult {
+        success: true,
+        message: format!("'{}' saved successfully!", name),
+        saved_path: dest.to_string_lossy().to_string(),
+    })
+}
+
+#[tauri::command]
 pub fn clear_library() -> Result<crate::models::CommandResult, String> {
     let library_dir = get_library_dir();
     if !library_dir.exists() {

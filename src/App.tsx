@@ -6,6 +6,7 @@ import { Premade } from "./components/premade/Premade";
 import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
 import { Updates } from "./components/updates/Updates";
+import { CursorEditor } from "./components/editor/CursorEditor";
 import { ToastContainer } from "./components/ui/Toast";
 import { useUIStore } from "./stores/uiStore";
 import * as api from "./lib/tauri";
@@ -47,8 +48,9 @@ function App() {
           });
           await relaunch();
         }
-      } catch {
-        // silent — no update available or network error
+      } catch (e) {
+        console.error("Update check failed:", e);
+        addToast("error", "Update check failed: " + String(e));
       }
     };
     checkForUpdates();
@@ -60,6 +62,8 @@ function App() {
         return <Dashboard />;
       case "library":
         return <Library />;
+      case "editor":
+        return <CursorEditor />;
       case "premade":
         return <Premade />;
       case "settings":

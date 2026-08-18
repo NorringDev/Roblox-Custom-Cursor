@@ -88,3 +88,10 @@ export async function getPremadePreview(premadeId: string): Promise<string | nul
 export async function applyPremadeCrosshair(premadeId: string): Promise<{ success: boolean; message: string }> {
   return invoke("apply_premade_crosshair", { premadeId });
 }
+
+export async function saveDrawnPngCrosshair(
+  pngData: string,
+  name: string
+): Promise<{ success: boolean; message: string; savedPath: string }> {
+  return invoke("save_drawn_crosshair", { pngData, name });
+}

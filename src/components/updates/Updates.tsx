@@ -12,6 +12,25 @@ interface UpdateEntry {
 
 const updates: UpdateEntry[] = [
   {
+    version: "1.0.8",
+    date: "2026-08-18",
+    changes: [
+      "New cursor editor — draw your own crosshairs",
+      "Pencil, eraser, fill, and eyedropper tools",
+      "Custom color picker with presets",
+      "Undo/redo support",
+      "Grid overlay for precise editing",
+      "Save directly to your crosshair library",
+    ],
+  },
+  {
+    version: "1.0.7",
+    date: "2026-08-18",
+    changes: [
+      "Added missing v1.0.6 entry to update log",
+    ],
+  },
+  {
     version: "1.0.6",
     date: "2026-08-18",
     changes: [
