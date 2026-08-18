@@ -1,11 +1,11 @@
 {
-  "version": "1.2.1",
-  "notes": "Added center crosshair marker on canvas for alignment",
-  "pub_date": "2026-08-18T15:55:00Z",
+  "version": "1.2.2",
+  "notes": "Fixed What's New modal to show correct version changes",
+  "pub_date": "2026-08-18T16:10:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0d6cXEyRmZqTHpyZE1NcDBxZGgvbG1JeTBzUEN4aEtGYkNsUzNoQk9hR0ZoOVNrdUpOSmsvMFVpR3hwNGVxaG5OWjFiano5bFB4d3gxWXV0U2o5L1FNPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDc1NzYzCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMi4xX3g2NC1zZXR1cC5leGUKU21yeEdENGtKSlFETWozenpaUndqNWMyNVc0QndzWlBSVXBsbjdBd0piSkRnODdjeVlwMjlTeGZubVhSWjgwYjdkUVNtajYvTE9SSHpxQTZTbVZjRHc9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.2.1/Roblox.Crosshair.Manager_1.2.1_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0tTeW9JRDcwTWJDMjVERlM1OGpXR2lKam9tcnJkU2UyZElYZkRzcHdoRHZvdWcrc09RUkNaa1hHYWpVTmcrUWxCTk03aTZQaVdRYnF3R0NJTHVlWlE0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDc4NjQwCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMi4yX3g2NC1zZXR1cC5leGUKN1Y2VE1ya2dtcVBOQW01dGU5d01ySForKzZWa0dUOGc3RHpyZFNrQnRLOUF0OUJSTGVzZlZSVWF4ajRaS3A3SmhRaTdQdFI4UDBpdTJMNG1QR3J3RHc9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.2.2/Roblox.Crosshair.Manager_1.2.2_x64-setup.exe"
     }
   }
 }
