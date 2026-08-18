@@ -45,20 +45,24 @@ function App() {
       try {
         const update = await check();
         if (update) {
-          let downloaded = 0;
+          addToast("info", `Update available: v${update.version}`);
           await update.downloadAndInstall((event) => {
             if (event.event === "Started") {
               addToast("info", "Downloading update...");
             } else if (event.event === "Progress") {
-              downloaded += event.data.chunkLength;
+              // progress tracking
             } else if (event.event === "Finished") {
-              addToast("success", "Update installed! Restarting...");
+              addToast("success", "Update downloaded! Restarting...");
             }
           });
-          await relaunch();
+          setTimeout(() => {
+            relaunch().catch(() => {
+              addToast("warning", "Update ready. Please restart the app manually.");
+            });
+          }, 1500);
         }
       } catch {
-        // silently ignore — no signature/version errors shown to user
+        // silently ignore
       }
     };
     checkForUpdates();
