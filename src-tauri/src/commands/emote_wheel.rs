@@ -1,9 +1,15 @@
 use std::path::PathBuf;
+use image::GenericImageView;
 use crate::core::{roblox_detector, backup, image_validator};
 use crate::models::CommandResult;
 
 #[tauri::command]
-pub fn apply_emote_bg(source_path: String) -> Result<CommandResult, String> {
+pub fn apply_emote_bg(
+    source_path: String,
+    zoom: f64,
+    offset_x: f64,
+    offset_y: f64,
+) -> Result<CommandResult, String> {
     let versions_dir =
         roblox_detector::get_roblox_versions_dir(None).ok_or("Roblox not found. Please check Settings.")?;
     let version_path = roblox_detector::find_active_version(&versions_dir)
@@ -28,9 +34,44 @@ pub fn apply_emote_bg(source_path: String) -> Result<CommandResult, String> {
     let img = image::open(&src)
         .map_err(|e| format!("Failed to open image: {}", e))?;
 
-    let resized = img.resize(256, 256, image::imageops::FilterType::Lanczos3);
+    let canvas_size: u32 = 256;
+    let mut output = image::RgbaImage::new(canvas_size, canvas_size);
 
-    resized.save(&emote_bg_dest)
+    let img_w = img.width() as f64;
+    let img_h = img.height() as f64;
+    let base_scale = (canvas_size as f64 / img_w).max(canvas_size as f64 / img_h);
+    let scale = base_scale * zoom;
+    let draw_w = img_w * scale;
+    let draw_h = img_h * scale;
+    let draw_x = (canvas_size as f64 - draw_w) / 2.0 + offset_x;
+    let draw_y = (canvas_size as f64 - draw_h) / 2.0 + offset_y;
+
+    let cx = canvas_size as f64 / 2.0;
+    let cy = canvas_size as f64 / 2.0;
+    let radius = canvas_size as f64 / 2.0;
+
+    for py in 0..canvas_size {
+        for px in 0..canvas_size {
+            let dx = px as f64 - cx;
+            let dy = py as f64 - cy;
+            if dx * dx + dy * dy <= radius * radius {
+                let src_x = (px as f64 - draw_x) / scale;
+                let src_y = (py as f64 - draw_y) / scale;
+                if src_x >= 0.0
+                    && src_x < img_w
+                    && src_y >= 0.0
+                    && src_y < img_h
+                {
+                    let sample_x = src_x.round() as u32;
+                    let sample_y = src_y.round() as u32;
+                    let pixel = img.get_pixel(sample_x, sample_y);
+                    output.put_pixel(px, py, pixel);
+                }
+            }
+        }
+    }
+
+    output.save(&emote_bg_dest)
         .map_err(|e| format!("Failed to save emote background: {}", e))?;
 
     Ok(CommandResult {

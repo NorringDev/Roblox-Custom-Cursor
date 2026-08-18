@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import {
   Upload,
   RotateCcw,
@@ -134,25 +134,10 @@ export function EmoteWheel() {
   }, []);
 
   const handleApply = async () => {
-    if (!canvasRef.current) return;
+    if (!imageSrc) return;
     setApplying(true);
     try {
-      const dataUrl = canvasRef.current.toDataURL("image/png");
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-
-      const tempPath = await invoke<string>(
-        "save_drawn_crosshair",
-        { pngData: base64, name: "__emote_bg_temp__" }
-      );
-
-      const result = await api.applyEmoteBg(tempPath);
+      const result = await api.applyEmoteBg(imageSrc, zoom, offset.x, offset.y);
       if (result.success) {
         addToast("success", "Emote wheel background applied!");
         setIsModified(true);

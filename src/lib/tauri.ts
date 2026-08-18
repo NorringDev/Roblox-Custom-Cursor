@@ -97,9 +97,12 @@ export async function saveDrawnPngCrosshair(
 }
 
 export async function applyEmoteBg(
-  sourcePath: string
+  sourcePath: string,
+  zoom: number,
+  offsetX: number,
+  offsetY: number
 ): Promise<{ success: boolean; message: string }> {
-  return invoke("apply_emote_bg", { sourcePath });
+  return invoke("apply_emote_bg", { sourcePath, zoom, offsetX, offsetY });
 }
 
 export async function restoreEmoteBg(): Promise<{ success: boolean; message: string }> {
