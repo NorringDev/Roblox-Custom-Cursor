@@ -10,6 +10,9 @@ import {
   Download,
   RotateCcw,
   Pipette,
+  Minus,
+  Square,
+  Circle,
 } from "lucide-react";
 import { Header } from "../layout/Header";
 import { Card } from "../ui/Card";
@@ -22,7 +25,7 @@ const CANVAS_SIZE = 64;
 const DISPLAY_SCALE = 8;
 const DISPLAY_SIZE = CANVAS_SIZE * DISPLAY_SCALE;
 
-type Tool = "pencil" | "eraser" | "fill" | "eyedropper";
+type Tool = "pencil" | "eraser" | "fill" | "eyedropper" | "line" | "rect" | "circle";
 
 const PRESET_COLORS = [
   "#000000", "#ffffff", "#ff0000", "#00ff00", "#0000ff",
@@ -51,6 +54,8 @@ export function CursorEditor() {
   const [saveModal, setSaveModal] = useState(false);
   const [saveName, setSaveName] = useState("");
   const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
+  const [shapeStart, setShapeStart] = useState<{ x: number; y: number } | null>(null);
+  const [shapePreview, setShapePreview] = useState<{ x: number; y: number } | null>(null);
   const lastPixel = useRef<{ x: number; y: number } | null>(null);
 
   const initCanvas = useCallback(() => {
@@ -136,6 +141,69 @@ export function CursorEditor() {
     }
   };
 
+  const setPixel = (ctx: CanvasRenderingContext2D, x: number, y: number, c: string) => {
+    if (x < 0 || x >= CANVAS_SIZE || y < 0 || y >= CANVAS_SIZE) return;
+    if (c === "eraser") {
+      ctx.clearRect(x, y, 1, 1);
+    } else {
+      const [r, g, b, a] = hexToRgb(c);
+      ctx.fillStyle = `rgba(${r},${g},${b},${a / 255})`;
+      ctx.fillRect(x, y, 1, 1);
+    }
+  };
+
+  const drawLinePixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
+    const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+    const dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+    let err = dx + dy;
+    while (true) {
+      setPixel(ctx, x0, y0, c);
+      if (x0 === x1 && y0 === y1) break;
+      const e2 = 2 * err;
+      if (e2 >= dy) { err += dy; x0 += sx; }
+      if (e2 <= dx) { err += dx; y0 += sy; }
+    }
+  };
+
+  const drawRectPixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
+    const minX = Math.min(x0, x1), maxX = Math.max(x0, x1);
+    const minY = Math.min(y0, y1), maxY = Math.max(y0, y1);
+    for (let x = minX; x <= maxX; x++) {
+      setPixel(ctx, x, minY, c);
+      setPixel(ctx, x, maxY, c);
+    }
+    for (let y = minY; y <= maxY; y++) {
+      setPixel(ctx, minX, y, c);
+      setPixel(ctx, maxX, y, c);
+    }
+  };
+
+  const drawCirclePixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
+    const cx = Math.round((x0 + x1) / 2);
+    const cy = Math.round((y0 + y1) / 2);
+    const rx = Math.abs(x1 - x0) / 2;
+    const ry = Math.abs(y1 - y0) / 2;
+    if (rx === 0 && ry === 0) { setPixel(ctx, cx, cy, c); return; }
+    const steps = Math.max(Math.round(Math.PI * 2 * Math.max(rx, ry)), 36);
+    for (let i = 0; i <= steps; i++) {
+      const angle = (i / steps) * 2 * Math.PI;
+      const px = Math.round(cx + rx * Math.cos(angle));
+      const py = Math.round(cy + ry * Math.sin(angle));
+      setPixel(ctx, px, py, c);
+    }
+  };
+
+  const commitShape = (start: { x: number; y: number }, end: { x: number; y: number }) => {
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    const c = tool === "eraser" ? "eraser" : color;
+    if (tool === "line") drawLinePixels(ctx, start.x, start.y, end.x, end.y, c);
+    else if (tool === "rect") drawRectPixels(ctx, start.x, start.y, end.x, end.y, c);
+    else if (tool === "circle") drawCirclePixels(ctx, start.x, start.y, end.x, end.y, c);
+    const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    saveToHistory(imageData);
+  };
+
   const floodFill = (ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColor: string) => {
     const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     const data = imageData.data;
@@ -215,15 +283,15 @@ export function CursorEditor() {
     drawAtPos(pos, ctx);
   };
 
+  const isShapeTool = tool === "line" || tool === "rect" || tool === "circle";
+
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDrawing(true);
-    lastPixel.current = null;
     const pos = getPixelPos(e);
     if (!pos) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
 
     if (tool === "eyedropper") {
+      const ctx = canvasRef.current?.getContext("2d");
+      if (!ctx) return;
       const c = getPixelColor(ctx, pos.x, pos.y);
       if (!c.endsWith("00")) {
         setColor(c);
@@ -233,12 +301,25 @@ export function CursorEditor() {
     }
 
     if (tool === "fill") {
+      const ctx = canvasRef.current?.getContext("2d");
+      if (!ctx) return;
       floodFill(ctx, pos.x, pos.y, color);
       const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
       saveToHistory(imageData);
       return;
     }
 
+    if (isShapeTool) {
+      setShapeStart(pos);
+      setShapePreview(pos);
+      setIsDrawing(true);
+      return;
+    }
+
+    setIsDrawing(true);
+    lastPixel.current = null;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
     drawAtPos(pos, ctx);
   };
 
@@ -247,14 +328,25 @@ export function CursorEditor() {
     setCursorPos(pos);
     if (!isDrawing) return;
     if (tool === "eyedropper" || tool === "fill") return;
+
+    if (isShapeTool) {
+      setShapePreview(pos);
+      return;
+    }
+
     if (!pos) return;
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
     drawAtPos(pos, ctx);
   };
 
-  const handleMouseUp = () => {
-    if (isDrawing && canvasRef.current) {
+  const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (isShapeTool && isDrawing && shapeStart) {
+      const pos = getPixelPos(e) || shapeStart;
+      commitShape(shapeStart, pos);
+      setShapeStart(null);
+      setShapePreview(null);
+    } else if (isDrawing && canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -266,7 +358,19 @@ export function CursorEditor() {
   };
 
   const handleCanvasLeave = () => {
-    handleMouseUp();
+    if (isShapeTool && isDrawing && shapeStart && shapePreview) {
+      commitShape(shapeStart, shapePreview);
+      setShapeStart(null);
+      setShapePreview(null);
+    } else if (isDrawing && canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        saveToHistory(imageData);
+      }
+    }
+    setIsDrawing(false);
+    lastPixel.current = null;
     setCursorPos(null);
   };
 
@@ -306,6 +410,9 @@ export function CursorEditor() {
   const tools: { id: Tool; icon: typeof Pencil; label: string }[] = [
     { id: "pencil", icon: Pencil, label: "Pencil" },
     { id: "eraser", icon: Eraser, label: "Eraser" },
+    { id: "line", icon: Minus, label: "Line" },
+    { id: "rect", icon: Square, label: "Rectangle" },
+    { id: "circle", icon: Circle, label: "Circle" },
     { id: "fill", icon: PaintBucket, label: "Fill" },
     { id: "eyedropper", icon: Pipette, label: "Eyedropper" },
   ];
@@ -495,6 +602,50 @@ export function CursorEditor() {
                   boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
                 }}
               />
+            )}
+            {isShapeTool && shapeStart && shapePreview && (
+              <svg
+                width={DISPLAY_SIZE}
+                height={DISPLAY_SIZE}
+                className="absolute inset-0 pointer-events-none"
+                style={{ mixBlendMode: "difference" }}
+              >
+                {tool === "line" && (
+                  <line
+                    x1={shapeStart.x * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    y1={shapeStart.y * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    x2={shapePreview.x * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    y2={shapePreview.y * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    stroke="white"
+                    strokeWidth={1}
+                    strokeDasharray="4 2"
+                  />
+                )}
+                {tool === "rect" && (
+                  <rect
+                    x={Math.min(shapeStart.x, shapePreview.x) * DISPLAY_SCALE}
+                    y={Math.min(shapeStart.y, shapePreview.y) * DISPLAY_SCALE}
+                    width={(Math.abs(shapePreview.x - shapeStart.x) + 1) * DISPLAY_SCALE}
+                    height={(Math.abs(shapePreview.y - shapeStart.y) + 1) * DISPLAY_SCALE}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth={1}
+                    strokeDasharray="4 2"
+                  />
+                )}
+                {tool === "circle" && (
+                  <ellipse
+                    cx={(shapeStart.x + shapePreview.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    cy={(shapeStart.y + shapePreview.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    rx={Math.abs(shapePreview.x - shapeStart.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    ry={Math.abs(shapePreview.y - shapeStart.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
+                    fill="none"
+                    stroke="white"
+                    strokeWidth={1}
+                    strokeDasharray="4 2"
+                  />
+                )}
+              </svg>
             )}
             {showGrid && (
               <svg
