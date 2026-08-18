@@ -106,9 +106,9 @@ const updates: UpdateEntry[] = [
 ];
 
 function UpdateItem({ entry, appVersion }: { entry: UpdateEntry; appVersion: string }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(() => appVersion.trim() === entry.version.trim());
 
-  const isCurrent = appVersion === entry.version;
+  const isCurrent = appVersion.trim() === entry.version.trim();
 
   return (
     <div className="border border-surface-800/50 rounded-xl overflow-hidden">
