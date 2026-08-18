@@ -1,11 +1,11 @@
 {
-  "version": "1.1.5",
-  "notes": "Removed update log page, added What's New startup popup, silenced updater signature errors",
-  "pub_date": "2026-08-18T14:00:00Z",
+  "version": "1.1.6",
+  "notes": "Added Line, Rectangle, and Circle shape tools with rubber-band preview. Brush cursor preview in editor.",
+  "pub_date": "2026-08-18T14:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0U2czI1bzVCS1FTTm9SOGVuVW5pNlhBZFpJUkY4cDhtSUg5L3FUYVZzcnNSWjZOcjlMSVNhRUpnZFZkamppeTZGU2ExSmdjZG5za05pdjJobnlBV2dVPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDYzNjAxCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS41X3g2NC1zZXR1cC5leGUKSm52M2NGQk9PRVoxK3UzRWhqQlJVam9VQnQ1WHl6NDd4M05ubDRTUDRPYUZldVkzZExWMUdPenFtNjREOFZBTmR1bTIxOUJDTC9JYWlKdWY2ZVhzREE9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.5/Roblox.Crosshair.Manager_1.1.5_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV1B6MVpaWmJDVkUvaHFIWjBJSXVDL2czQlNxU3lPR3lXaHQyQTZXajVmRUcwQWtrbCs5NTVwYW41N2dwQWlTVTJMUEd0Y0c1L3BVUElKTGdGS1crMWdvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDY3NzA1CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMS42X3g2NC1zZXR1cC5leGUKY3hGaU5JOEorMS9SM1U4UEZ1QXo0eFVxKzdKMkRFYTVSclZBb1N4MGdpUy93ZWs0M1hjVHZ6T2k4ODFZaTltK1orZXVSUmg1L3RtcnNIeWFuMHZtQ3c9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.1.6/Roblox.Crosshair.Manager_1.1.6_x64-setup.exe"
     }
   }
 }
