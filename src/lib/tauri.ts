@@ -100,9 +100,11 @@ export async function applyEmoteBg(
   sourcePath: string,
   zoom: number,
   offsetX: number,
-  offsetY: number
+  offsetY: number,
+  borderColor: string,
+  borderWidth: number
 ): Promise<{ success: boolean; message: string }> {
-  return invoke("apply_emote_bg", { sourcePath, zoom, offsetX, offsetY });
+  return invoke("apply_emote_bg", { sourcePath, zoom, offsetX, offsetY, borderColor, borderWidth });
 }
 
 export async function restoreEmoteBg(): Promise<{ success: boolean; message: string }> {
@@ -111,4 +113,28 @@ export async function restoreEmoteBg(): Promise<{ success: boolean; message: str
 
 export async function getEmoteBgStatus(): Promise<boolean> {
   return invoke("get_emote_bg_status");
+}
+
+export async function saveEmoteBgCollection(
+  name: string,
+  sourcePath: string,
+  zoom: number,
+  offsetX: number,
+  offsetY: number,
+  borderColor: string,
+  borderWidth: number
+): Promise<{ success: boolean; message: string }> {
+  return invoke("save_emote_bg_collection", { name, sourcePath, zoom, offsetX, offsetY, borderColor, borderWidth });
+}
+
+export async function getEmoteBgCollection(): Promise<{ id: string; name: string; path: string; borderColor: string; borderWidth: number }[]> {
+  return invoke("get_emote_bg_collection");
+}
+
+export async function deleteEmoteBgCollection(id: string): Promise<{ success: boolean; message: string }> {
+  return invoke("delete_emote_bg_collection", { id });
+}
+
+export async function applyEmoteBgCollection(id: string): Promise<{ success: boolean; message: string }> {
+  return invoke("apply_emote_bg_collection", { id });
 }

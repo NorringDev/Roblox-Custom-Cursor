@@ -8,6 +8,9 @@ import {
   Check,
   Image as ImageIcon,
   RefreshCw,
+  Trash2,
+  Save,
+  Palette,
 } from "lucide-react";
 import { Header } from "../layout/Header";
 import { Card } from "../ui/Card";
@@ -16,6 +19,14 @@ import { useUIStore } from "../../stores/uiStore";
 import * as api from "../../lib/tauri";
 
 const CANVAS_SIZE = 300;
+
+interface CollectionItem {
+  id: string;
+  name: string;
+  path: string;
+  borderColor: string;
+  borderWidth: number;
+}
 
 export function EmoteWheel() {
   const { addToast } = useUIStore();
@@ -28,12 +39,27 @@ export function EmoteWheel() {
   const [isModified, setIsModified] = useState(false);
   const [applying, setApplying] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [borderColor, setBorderColor] = useState("#ffffff");
+  const [borderWidth, setBorderWidth] = useState(0);
+  const [collection, setCollection] = useState<CollectionItem[]>([]);
+  const [saveName, setSaveName] = useState("");
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     api.getEmoteBgStatus().then(setIsModified).catch(() => {});
+    loadCollection();
   }, []);
+
+  const loadCollection = async () => {
+    try {
+      const items = await api.getEmoteBgCollection();
+      setCollection(items);
+    } catch {
+      // silent
+    }
+  };
 
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -52,19 +78,31 @@ export function EmoteWheel() {
     const x = (CANVAS_SIZE - drawW) / 2 + offset.x;
     const y = (CANVAS_SIZE - drawH) / 2 + offset.y;
 
+    const cx = CANVAS_SIZE / 2;
+    const cy = CANVAS_SIZE / 2;
+    const radius = CANVAS_SIZE / 2;
+
     ctx.save();
     ctx.beginPath();
-    ctx.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0, Math.PI * 2);
+    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.clip();
     ctx.drawImage(imageObj, x, y, drawW, drawH);
     ctx.restore();
 
-    ctx.strokeStyle = "rgba(255,255,255,0.3)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(CANVAS_SIZE / 2, CANVAS_SIZE / 2, CANVAS_SIZE / 2 - 1, 0, Math.PI * 2);
-    ctx.stroke();
-  }, [imageObj, zoom, offset]);
+    if (borderWidth > 0) {
+      ctx.strokeStyle = borderColor;
+      ctx.lineWidth = borderWidth * (CANVAS_SIZE / 512) * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius - ctx.lineWidth / 2, 0, Math.PI * 2);
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius - 1, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  }, [imageObj, zoom, offset, borderColor, borderWidth]);
 
   useEffect(() => {
     drawCanvas();
@@ -100,14 +138,11 @@ export function EmoteWheel() {
     }
   };
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      setZoom((z) => Math.min(5, Math.max(0.2, z + delta)));
-    },
-    []
-  );
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setZoom((z) => Math.min(5, Math.max(0.2, z + delta)));
+  }, []);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -137,7 +172,7 @@ export function EmoteWheel() {
     if (!imageSrc) return;
     setApplying(true);
     try {
-      const result = await api.applyEmoteBg(imageSrc, zoom, offset.x, offset.y);
+      const result = await api.applyEmoteBg(imageSrc, zoom, offset.x, offset.y, borderColor, borderWidth);
       if (result.success) {
         addToast("success", "Emote wheel background applied!");
         setIsModified(true);
@@ -172,6 +207,51 @@ export function EmoteWheel() {
     }
   };
 
+  const handleSave = async () => {
+    if (!imageSrc || !saveName.trim()) return;
+    try {
+      const result = await api.saveEmoteBgCollection(
+        saveName.trim(), imageSrc, zoom, offset.x, offset.y, borderColor, borderWidth
+      );
+      if (result.success) {
+        addToast("success", result.message);
+        setShowSaveDialog(false);
+        setSaveName("");
+        loadCollection();
+      } else {
+        addToast("error", result.message);
+      }
+    } catch (e) {
+      addToast("error", "Failed to save: " + String(e));
+    }
+  };
+
+  const handleApplyCollection = async (item: CollectionItem) => {
+    try {
+      const result = await api.applyEmoteBgCollection(item.id);
+      if (result.success) {
+        addToast("success", `"${item.name}" applied!`);
+        setIsModified(true);
+      } else {
+        addToast("error", result.message);
+      }
+    } catch (e) {
+      addToast("error", "Failed to apply: " + String(e));
+    }
+  };
+
+  const handleDeleteCollection = async (item: CollectionItem) => {
+    try {
+      const result = await api.deleteEmoteBgCollection(item.id);
+      if (result.success) {
+        addToast("success", `"${item.name}" deleted`);
+        loadCollection();
+      }
+    } catch (e) {
+      addToast("error", "Failed to delete: " + String(e));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Header
@@ -198,7 +278,7 @@ export function EmoteWheel() {
               ref={canvasRef}
               width={CANVAS_SIZE}
               height={CANVAS_SIZE}
-              className="rounded-full border border-surface-700/50"
+              className="rounded-full"
               style={{
                 background:
                   "repeating-conic-gradient(#1a1a2e 0% 25%, #16213e 0% 50%) 50% / 20px 20px",
@@ -253,20 +333,61 @@ export function EmoteWheel() {
             </Button>
 
             {imageObj && (
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full"
-                onClick={handleApply}
-                disabled={applying}
-              >
-                {applying ? (
-                  <RefreshCw size={16} className="animate-spin" />
-                ) : (
-                  <Check size={16} />
-                )}
-                {applying ? "Applying..." : "Apply Background"}
-              </Button>
+              <>
+                <div className="pt-3 border-t border-surface-700/50">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Palette size={14} className="text-surface-400" />
+                    <span className="text-xs font-medium text-surface-400">Border</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={borderColor}
+                        onChange={(e) => setBorderColor(e.target.value)}
+                        className="w-8 h-8 rounded-lg border border-surface-600 cursor-pointer bg-transparent"
+                      />
+                      <span className="text-xs text-surface-500">{borderColor}</span>
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="range"
+                        min={0}
+                        max={20}
+                        value={borderWidth}
+                        onChange={(e) => setBorderWidth(Number(e.target.value))}
+                        className="w-full h-1.5 bg-surface-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
+                      />
+                      <span className="text-[10px] text-surface-600">{borderWidth}px</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  variant="primary"
+                  size="md"
+                  className="w-full"
+                  onClick={handleApply}
+                  disabled={applying}
+                >
+                  {applying ? (
+                    <RefreshCw size={16} className="animate-spin" />
+                  ) : (
+                    <Check size={16} />
+                  )}
+                  {applying ? "Applying..." : "Apply Background"}
+                </Button>
+
+                <Button
+                  variant="secondary"
+                  size="md"
+                  className="w-full"
+                  onClick={() => setShowSaveDialog(true)}
+                >
+                  <Save size={16} />
+                  Save to Collection
+                </Button>
+              </>
             )}
 
             {isModified && (
@@ -301,6 +422,77 @@ export function EmoteWheel() {
           </div>
         </Card>
       </div>
+
+      {showSaveDialog && (
+        <Card>
+          <h3 className="text-sm font-semibold text-surface-100 mb-3">
+            Save to Collection
+          </h3>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={saveName}
+              onChange={(e) => setSaveName(e.target.value)}
+              placeholder="Enter name..."
+              className="flex-1 px-3 py-2 text-sm bg-surface-800 border border-surface-600 rounded-xl text-surface-200 placeholder:text-surface-600 focus:outline-none focus:border-brand-500"
+              onKeyDown={(e) => e.key === "Enter" && handleSave()}
+              autoFocus
+            />
+            <Button variant="primary" size="sm" onClick={handleSave} disabled={!saveName.trim()}>
+              <Save size={14} />
+              Save
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => { setShowSaveDialog(false); setSaveName(""); }}>
+              Cancel
+            </Button>
+          </div>
+        </Card>
+      )}
+
+      {collection.length > 0 && (
+        <Card>
+          <h3 className="text-sm font-semibold text-surface-100 mb-4">
+            Collection
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+            {collection.map((item) => (
+              <div
+                key={item.id}
+                className="relative group bg-surface-800/50 border border-surface-700/50 rounded-xl p-3 flex flex-col items-center gap-2"
+              >
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2" style={{ borderColor: item.borderColor || "transparent" }}>
+                  <img
+                    src={convertFileSrc(item.path)}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="text-xs text-surface-300 text-center truncate w-full">
+                  {item.name}
+                </span>
+                <div className="flex gap-1 w-full">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleApplyCollection(item)}
+                  >
+                    <Check size={12} />
+                    Apply
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleDeleteCollection(item)}
+                  >
+                    <Trash2 size={12} />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

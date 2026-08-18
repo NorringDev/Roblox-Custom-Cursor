@@ -44,6 +44,10 @@ pub fn run() {
             commands::emote_wheel::apply_emote_bg,
             commands::emote_wheel::restore_emote_bg,
             commands::emote_wheel::get_emote_bg_status,
+            commands::emote_wheel::save_emote_bg_collection,
+            commands::emote_wheel::get_emote_bg_collection,
+            commands::emote_wheel::delete_emote_bg_collection,
+            commands::emote_wheel::apply_emote_bg_collection,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
