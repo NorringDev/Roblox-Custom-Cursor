@@ -12,6 +12,20 @@ interface UpdateEntry {
 
 const updates: UpdateEntry[] = [
   {
+    version: "1.1.0",
+    date: "2026-08-18",
+    changes: [
+      "Fixed Current badge in update log",
+    ],
+  },
+  {
+    version: "1.0.9",
+    date: "2026-08-18",
+    changes: [
+      "Fixed single-click drawing in cursor editor",
+    ],
+  },
+  {
     version: "1.0.8",
     date: "2026-08-18",
     changes: [
