@@ -12,6 +12,14 @@ interface UpdateEntry {
 
 const updates: UpdateEntry[] = [
   {
+    version: "1.0.6",
+    date: "2026-08-18",
+    changes: [
+      "New Update Log page in sidebar",
+      "Smoother premade crosshair previews",
+    ],
+  },
+  {
     version: "1.0.5",
     date: "2026-08-18",
     changes: [
