@@ -1,11 +1,11 @@
 {
-  "version": "1.2.3",
-  "notes": "Fixed updater: added delay before relaunch + fallback restart message",
-  "pub_date": "2026-08-18T16:25:00Z",
+  "version": "1.2.4",
+  "notes": "Emote Wheel Background changer - customize your emote wheel with any image",
+  "pub_date": "2026-08-18T18:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0xnSlc4RmpmV0hzY0ZsS2lrS1k4d3dXZlVHN0FrRVlWdjFjL1RvNUR5Y0JNUGdBTjdRdncvVXJSU3U4S2NOMUNodE9mR2I4WGVpd0NlbXkwbkp4bGdRPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDc5NjI1CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMi4zX3g2NC1zZXR1cC5leGUKNWFmemh5MjVJdXNKK3QzUG1FVWFVeUlCbnlyTGo3MVlBRkx4QndjVW95ZlpyKytWK1FlZm4xdHJ3NE8vb2NkdnJRc1dmYjJpS1Y0QXU4bkhLOXk1REE9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.2.3/Roblox.Crosshair.Manager_1.2.3_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV01STjR1Y3RyMHFmRUpFQ3o1eUdtRC9hclhsWUdKNXZmTEZTNFlVUk5OakNtc0dHMmI0MFBrcXdnVytaRXIyNzdDYm9RWG5rMGZnSno1V1hXNmdicFFnPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MDg4OTkyCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMi40X3g2NC1zZXR1cC5leGUKam9XMmpFL2RoQW5ZbTMrMExINVBHUkJnQ2NsR3JxbUVUUmp5THUvdFBaYk51eHRRZHk1NnFEMy9JbWR3Z3pjUFVvd0Z0d3RHZzFRL2dTdXcwbTRvQnc9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.2.4/Roblox.Crosshair.Manager_1.2.4_x64-setup.exe"
     }
   }
 }
