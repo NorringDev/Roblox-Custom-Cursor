@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc } from "@tauri-apps/api/core";
 import {
   Upload,
   RotateCcw,
@@ -89,7 +90,7 @@ export function EmoteWheel() {
         setZoom(1);
         setOffset({ x: 0, y: 0 });
       };
-      img.src = `asset://localhost/${encodeURIComponent(path)}`;
+      img.src = convertFileSrc(path);
     } catch (e) {
       addToast("error", "Failed to open file: " + String(e));
     }
