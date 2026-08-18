@@ -63,6 +63,14 @@ fn render_emote_bg(
 
     let border_rgba = parse_color(border_color);
 
+    if border_w > 0 {
+        for py in 0..canvas_size {
+            for px in 0..canvas_size {
+                output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
+            }
+        }
+    }
+
     for py in 0..canvas_size {
         for px in 0..canvas_size {
             let dx = px as f64 - cx;
