@@ -657,7 +657,7 @@ export function CursorEditor() {
   return (
     <div className="space-y-6">
       <Header
-        title="Create Cursor"
+        title="Create Cursor (Beta)"
         subtitle="Draw your own custom crosshair"
         actions={
           <Button onClick={() => setSaveModal(true)}>
