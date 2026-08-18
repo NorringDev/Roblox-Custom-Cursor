@@ -30,6 +30,7 @@ pub fn apply_emote_bg(
     backup::save_emote_bg_original_if_needed(&version_path)?;
 
     let emote_bg_dest = roblox_detector::get_emote_bg_path(&version_path);
+    let emote_bg_png = emote_bg_dest.with_extension("png");
 
     let img = image::open(&src)
         .map_err(|e| format!("Failed to open image: {}", e))?;
@@ -71,8 +72,13 @@ pub fn apply_emote_bg(
         }
     }
 
-    output.save(&emote_bg_dest)
+    output.save(&emote_bg_png)
         .map_err(|e| format!("Failed to save emote background: {}", e))?;
+
+    if emote_bg_png != emote_bg_dest {
+        std::fs::rename(&emote_bg_png, &emote_bg_dest)
+            .map_err(|e| format!("Failed to rename emote background: {}", e))?;
+    }
 
     Ok(CommandResult {
         success: true,
