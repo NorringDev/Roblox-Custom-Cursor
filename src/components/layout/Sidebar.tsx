@@ -6,7 +6,6 @@ import {
   Heart,
   Target,
   Sparkles,
-  History,
   PenTool,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
@@ -18,7 +17,6 @@ const navItems = [
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "editor", label: "Create Cursor", icon: PenTool },
   { id: "premade", label: "Premade", icon: Sparkles },
-  { id: "updates", label: "Updates", icon: History },
   { id: "settings", label: "Settings", icon: Settings },
   { id: "credits", label: "Credits", icon: Heart },
 ];

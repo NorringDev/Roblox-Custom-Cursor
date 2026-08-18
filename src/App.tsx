@@ -1,13 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "./components/layout/Sidebar";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { Library } from "./components/library/Library";
 import { Premade } from "./components/premade/Premade";
 import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
-import { Updates } from "./components/updates/Updates";
 import { CursorEditor } from "./components/editor/CursorEditor";
 import { ToastContainer } from "./components/ui/Toast";
+import { WhatsNewModal } from "./components/ui/WhatsNewModal";
 import { useUIStore } from "./stores/uiStore";
 import * as api from "./lib/tauri";
 import { check } from "@tauri-apps/plugin-updater";
@@ -15,6 +15,7 @@ import { relaunch } from "@tauri-apps/plugin-process";
 
 function App() {
   const { currentPage, addToast } = useUIStore();
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -31,11 +32,19 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const CURRENT_VERSION = "1.1.4";
+    const lastSeen = localStorage.getItem("whatsnew_version");
+    if (lastSeen !== CURRENT_VERSION) {
+      setShowWhatsNew(true);
+      localStorage.setItem("whatsnew_version", CURRENT_VERSION);
+    }
+  }, []);
+
+  useEffect(() => {
     const checkForUpdates = async () => {
       try {
         const update = await check();
         if (update) {
-          addToast("info", `Update available: v${update.version}`);
           let downloaded = 0;
           await update.downloadAndInstall((event) => {
             if (event.event === "Started") {
@@ -48,9 +57,8 @@ function App() {
           });
           await relaunch();
         }
-      } catch (e) {
-        console.error("Update check failed:", e);
-        addToast("error", "Update check failed: " + String(e));
+      } catch {
+        // silently ignore — no signature/version errors shown to user
       }
     };
     checkForUpdates();
@@ -68,8 +76,6 @@ function App() {
         return <Premade />;
       case "settings":
         return <Settings />;
-      case "updates":
-        return <Updates />;
       case "credits":
         return <Credits />;
       default:
@@ -82,6 +88,7 @@ function App() {
       <Sidebar />
       <main className="flex-1 overflow-y-auto p-6">{renderPage()}</main>
       <ToastContainer />
+      <WhatsNewModal open={showWhatsNew} onClose={() => setShowWhatsNew(false)} />
     </div>
   );
 }
