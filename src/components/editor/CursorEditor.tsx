@@ -822,6 +822,16 @@ export function CursorEditor() {
                 opacity: 0.3,
               }}
             />
+            <svg
+              width={DISPLAY_SIZE}
+              height={DISPLAY_SIZE}
+              className="absolute inset-0 pointer-events-none"
+              style={{ mixBlendMode: "difference" }}
+            >
+              <circle cx={CANVAS_SIZE / 2 * DISPLAY_SCALE} cy={CANVAS_SIZE / 2 * DISPLAY_SCALE} r={3} fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth={1} />
+              <line x1={CANVAS_SIZE / 2 * DISPLAY_SCALE - 6} y1={CANVAS_SIZE / 2 * DISPLAY_SCALE} x2={CANVAS_SIZE / 2 * DISPLAY_SCALE + 6} y2={CANVAS_SIZE / 2 * DISPLAY_SCALE} stroke="rgba(255,255,255,0.5)" strokeWidth={1} />
+              <line x1={CANVAS_SIZE / 2 * DISPLAY_SCALE} y1={CANVAS_SIZE / 2 * DISPLAY_SCALE - 6} x2={CANVAS_SIZE / 2 * DISPLAY_SCALE} y2={CANVAS_SIZE / 2 * DISPLAY_SCALE + 6} stroke="rgba(255,255,255,0.5)" strokeWidth={1} />
+            </svg>
           </div>
         </Card>
       </div>
