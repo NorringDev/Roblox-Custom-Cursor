@@ -1,6 +1,6 @@
 [package]
 name = "roblox-crosshair-manager"
-version = "1.0.8"
+version = "1.0.9"
 description = "A modern Roblox Crosshair Manager"
 authors = ["you"]
 edition = "2021"

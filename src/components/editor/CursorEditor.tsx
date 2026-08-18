@@ -172,6 +172,24 @@ export function CursorEditor() {
     ctx.putImageData(imageData, 0, 0);
   };
 
+  const drawAtPos = (pos: { x: number; y: number }, ctx: CanvasRenderingContext2D) => {
+    const c = tool === "eraser" ? "eraser" : color;
+    if (lastPixel.current) {
+      const dx = pos.x - lastPixel.current.x;
+      const dy = pos.y - lastPixel.current.y;
+      const steps = Math.max(Math.abs(dx), Math.abs(dy));
+      for (let i = 0; i <= steps; i++) {
+        const t = steps === 0 ? 0 : i / steps;
+        const ix = Math.round(lastPixel.current.x + dx * t);
+        const iy = Math.round(lastPixel.current.y + dy * t);
+        drawPixel(ctx, ix, iy, c, brushSize);
+      }
+    } else {
+      drawPixel(ctx, pos.x, pos.y, c, brushSize);
+    }
+    lastPixel.current = pos;
+  };
+
   const handleCanvasAction = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const pos = getPixelPos(e);
     if (!pos) return;
@@ -193,34 +211,44 @@ export function CursorEditor() {
       return;
     }
 
-    if (isDrawing) {
-      const c = tool === "eraser" ? "eraser" : color;
-      if (lastPixel.current) {
-        const dx = pos.x - lastPixel.current.x;
-        const dy = pos.y - lastPixel.current.y;
-        const steps = Math.max(Math.abs(dx), Math.abs(dy));
-        for (let i = 0; i <= steps; i++) {
-          const t = steps === 0 ? 0 : i / steps;
-          const ix = Math.round(lastPixel.current.x + dx * t);
-          const iy = Math.round(lastPixel.current.y + dy * t);
-          drawPixel(ctx, ix, iy, c, brushSize);
-        }
-      } else {
-        drawPixel(ctx, pos.x, pos.y, c, brushSize);
-      }
-      lastPixel.current = pos;
-    }
+    drawAtPos(pos, ctx);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDrawing(true);
     lastPixel.current = null;
-    handleCanvasAction(e);
+    const pos = getPixelPos(e);
+    if (!pos) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+
+    if (tool === "eyedropper") {
+      const c = getPixelColor(ctx, pos.x, pos.y);
+      if (!c.endsWith("00")) {
+        setColor(c);
+        setTool("pencil");
+      }
+      return;
+    }
+
+    if (tool === "fill") {
+      floodFill(ctx, pos.x, pos.y, color);
+      const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+      saveToHistory(imageData);
+      return;
+    }
+
+    drawAtPos(pos, ctx);
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
-    handleCanvasAction(e);
+    if (tool === "eyedropper" || tool === "fill") return;
+    const pos = getPixelPos(e);
+    if (!pos) return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    drawAtPos(pos, ctx);
   };
 
   const handleMouseUp = () => {
