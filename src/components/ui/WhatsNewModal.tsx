@@ -8,8 +8,8 @@ interface WhatsNewModalProps {
 }
 
 const latestChanges = [
-  "Improved circle tool — circles are now smooth, not blocky",
-  "Faster drawing performance",
+  "Smooth drawing — no more lag or stuttering",
+  "Fixed circle tool — now draws proper circles",
 ];
 
 export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
@@ -47,7 +47,7 @@ export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-brand-400" />
                 <h2 className="text-sm font-semibold text-surface-100">
-                  What's New in v1.1.7
+                  What's New in v1.1.8
                 </h2>
               </div>
               <button

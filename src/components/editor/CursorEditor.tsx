@@ -53,10 +53,21 @@ export function CursorEditor() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [saveModal, setSaveModal] = useState(false);
   const [saveName, setSaveName] = useState("");
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
-  const [shapeStart, setShapeStart] = useState<{ x: number; y: number } | null>(null);
-  const [shapePreview, setShapePreview] = useState<{ x: number; y: number } | null>(null);
   const lastPixel = useRef<{ x: number; y: number } | null>(null);
+
+  const toolRef = useRef(tool);
+  const colorRef = useRef(color);
+  const brushSizeRef = useRef(brushSize);
+  const isDrawingRef = useRef(false);
+  const shapeStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  const cursorOverlayRef = useRef<HTMLDivElement>(null);
+  const cursorEyedropperRef = useRef<HTMLDivElement>(null);
+  const shapeSvgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => { toolRef.current = tool; }, [tool]);
+  useEffect(() => { colorRef.current = color; }, [color]);
+  useEffect(() => { brushSizeRef.current = brushSize; }, [brushSize]);
 
   const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -104,7 +115,7 @@ export function CursorEditor() {
     setHistoryIndex(newIndex);
   };
 
-  const getPixelPos = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const getPixelPos = (e: React.MouseEvent<HTMLCanvasElement> | MouseEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
@@ -203,87 +214,56 @@ export function CursorEditor() {
 
   const drawCirclePixels = (ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string) => {
     const colorStr = prepareColor(c);
-    const cx = (x0 + x1) / 2;
-    const cy = (y0 + y1) / 2;
-    const rx = Math.abs(x1 - x0) / 2;
-    const ry = Math.abs(y1 - y0) / 2;
+    const cx = Math.round((x0 + x1) / 2);
+    const cy = Math.round((y0 + y1) / 2);
+    const rx = Math.round(Math.abs(x1 - x0) / 2);
+    const ry = Math.round(Math.abs(y1 - y0) / 2);
 
-    if (rx < 0.5 && ry < 0.5) {
-      setPixelFast(ctx, Math.round(cx), Math.round(cy), colorStr);
+    if (rx === 0 && ry === 0) {
+      setPixelFast(ctx, cx, cy, colorStr);
       return;
     }
 
-    if (rx >= ry) {
-      let x = Math.round(rx);
-      let y = 0;
-      let d1 = ry * ry - rx * rx * ry + rx * rx / 4;
-      let dx = 2 * ry * ry * x;
-      let dy = 0;
-      while (dx >= dy) {
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
-        y++;
-        dy += 2 * rx * rx;
-        if (d1 < 0) {
-          d1 += ry * ry + dy;
-        } else {
-          x--;
-          dx -= 2 * ry * ry;
-          d1 += ry * ry - dx + dy;
-        }
+    if (rx > 0 && ry === 0) {
+      for (let x = cx - rx; x <= cx + rx; x++) setPixelFast(ctx, x, cy, colorStr);
+      return;
+    }
+    if (rx === 0 && ry > 0) {
+      for (let y = cy - ry; y <= cy + ry; y++) setPixelFast(ctx, cx, y, colorStr);
+      return;
+    }
+
+    let a = rx, b = ry;
+    let aSq = a * a, bSq = b * b;
+    let dx = 0, dy = b;
+    let d1 = bSq - aSq * b + 0.25 * aSq;
+
+    while (dx * bSq < dy * aSq) {
+      setPixelFast(ctx, cx + dx, cy + dy, colorStr);
+      setPixelFast(ctx, cx - dx, cy + dy, colorStr);
+      setPixelFast(ctx, cx + dx, cy - dy, colorStr);
+      setPixelFast(ctx, cx - dx, cy - dy, colorStr);
+      dx++;
+      if (d1 < 0) {
+        d1 += bSq * (2 * dx + 1);
+      } else {
+        dy--;
+        d1 += bSq * (2 * dx + 1) - aSq * (2 * dy - 1);
       }
-      let d2 = ry * ry * (x * x + x + 0.25) + rx * rx * (y - 1) * (y - 1) - rx * rx * ry * ry;
-      while (y <= Math.round(ry)) {
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
-        y++;
-        if (d2 > 0) {
-          d2 += rx * rx - dx;
-        } else {
-          x--;
-          dx -= 2 * ry * ry;
-          d2 += rx * ry * ry - dx;
-        }
-      }
-    } else {
-      let y = Math.round(ry);
-      let x = 0;
-      let d1 = rx * rx - ry * ry * rx + ry * ry / 4;
-      let dy = 2 * rx * rx * y;
-      let dx = 0;
-      while (dy >= dx) {
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
-        x++;
-        dx += 2 * ry * ry;
-        if (d1 < 0) {
-          d1 += rx * rx + dx;
-        } else {
-          y--;
-          dy -= 2 * rx * rx;
-          d1 += rx * rx - dy + dx;
-        }
-      }
-      let d2 = rx * rx * (y * y + y + 0.25) + ry * ry * (x - 1) * (x - 1) - ry * ry * rx * rx;
-      while (x <= Math.round(rx)) {
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy + y), colorStr);
-        setPixelFast(ctx, Math.round(cx + x), Math.round(cy - y), colorStr);
-        setPixelFast(ctx, Math.round(cx - x), Math.round(cy - y), colorStr);
-        x++;
-        if (d2 > 0) {
-          d2 += ry * ry - dy;
-        } else {
-          y--;
-          dy -= 2 * rx * rx;
-          d2 += ry * rx * rx - dy;
-        }
+    }
+
+    let d2 = bSq * (dx + 0.5) * (dx + 0.5) + aSq * (dy - 1) * (dy - 1) - aSq * bSq;
+    while (dy >= 0) {
+      setPixelFast(ctx, cx + dx, cy + dy, colorStr);
+      setPixelFast(ctx, cx - dx, cy + dy, colorStr);
+      setPixelFast(ctx, cx + dx, cy - dy, colorStr);
+      setPixelFast(ctx, cx - dx, cy - dy, colorStr);
+      dy--;
+      if (d2 > 0) {
+        d2 += aSq * (1 - 2 * dy);
+      } else {
+        dx++;
+        d2 += bSq * (2 * dx + 1) + aSq * (1 - 2 * dy);
       }
     }
   };
@@ -291,10 +271,10 @@ export function CursorEditor() {
   const commitShape = (start: { x: number; y: number }, end: { x: number; y: number }) => {
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
-    const c = tool === "eraser" ? "eraser" : color;
-    if (tool === "line") drawLinePixels(ctx, start.x, start.y, end.x, end.y, c);
-    else if (tool === "rect") drawRectPixels(ctx, start.x, start.y, end.x, end.y, c);
-    else if (tool === "circle") drawCirclePixels(ctx, start.x, start.y, end.x, end.y, c);
+    const c = toolRef.current === "eraser" ? "eraser" : colorRef.current;
+    if (toolRef.current === "line") drawLinePixels(ctx, start.x, start.y, end.x, end.y, c);
+    else if (toolRef.current === "rect") drawRectPixels(ctx, start.x, start.y, end.x, end.y, c);
+    else if (toolRef.current === "circle") drawCirclePixels(ctx, start.x, start.y, end.x, end.y, c);
     const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     saveToHistory(imageData);
   };
@@ -337,7 +317,7 @@ export function CursorEditor() {
   };
 
   const drawAtPos = (pos: { x: number; y: number }, ctx: CanvasRenderingContext2D) => {
-    const c = tool === "eraser" ? "eraser" : color;
+    const c = toolRef.current === "eraser" ? "eraser" : colorRef.current;
     if (lastPixel.current) {
       const dx = pos.x - lastPixel.current.x;
       const dy = pos.y - lastPixel.current.y;
@@ -346,45 +326,90 @@ export function CursorEditor() {
         const t = steps === 0 ? 0 : i / steps;
         const ix = Math.round(lastPixel.current.x + dx * t);
         const iy = Math.round(lastPixel.current.y + dy * t);
-        drawPixel(ctx, ix, iy, c, brushSize);
+        drawPixel(ctx, ix, iy, c, brushSizeRef.current);
       }
     } else {
-      drawPixel(ctx, pos.x, pos.y, c, brushSize);
+      drawPixel(ctx, pos.x, pos.y, c, brushSizeRef.current);
     }
     lastPixel.current = pos;
   };
 
-  const handleCanvasAction = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const pos = getPixelPos(e);
-    if (!pos) return;
-    const ctx = canvasRef.current?.getContext("2d");
-    if (!ctx) return;
-
-    if (tool === "eyedropper") {
-      const c = getPixelColor(ctx, pos.x, pos.y);
-      if (c.endsWith("00")) return;
-      setColor(c);
-      setTool("pencil");
+  const updateCursorOverlay = (pos: { x: number; y: number } | null) => {
+    const cur = cursorOverlayRef.current;
+    if (!cur) return;
+    if (!pos || toolRef.current === "eyedropper") {
+      cur.style.display = "none";
       return;
     }
-
-    if (tool === "fill") {
-      floodFill(ctx, pos.x, pos.y, color);
-      const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-      saveToHistory(imageData);
-      return;
-    }
-
-    drawAtPos(pos, ctx);
+    const bs = brushSizeRef.current;
+    cur.style.display = "block";
+    cur.style.width = bs * DISPLAY_SCALE + "px";
+    cur.style.height = bs * DISPLAY_SCALE + "px";
+    cur.style.left = (pos.x * DISPLAY_SCALE - (bs * DISPLAY_SCALE) / 2) + "px";
+    cur.style.top = (pos.y * DISPLAY_SCALE - (bs * DISPLAY_SCALE) / 2) + "px";
   };
 
-  const isShapeTool = tool === "line" || tool === "rect" || tool === "circle";
+  const updateEyedropperOverlay = (pos: { x: number; y: number } | null) => {
+    const cur = cursorEyedropperRef.current;
+    if (!cur) return;
+    if (!pos || toolRef.current !== "eyedropper") {
+      cur.style.display = "none";
+      return;
+    }
+    cur.style.display = "block";
+    cur.style.left = (pos.x * DISPLAY_SCALE + DISPLAY_SCALE / 2) + "px";
+    cur.style.top = (pos.y * DISPLAY_SCALE + DISPLAY_SCALE / 2) + "px";
+  };
+
+  const updateShapeOverlay = (start: { x: number; y: number } | null, end: { x: number; y: number } | null) => {
+    const svg = shapeSvgRef.current;
+    if (!svg) return;
+    if (!start || !end) {
+      svg.style.display = "none";
+      return;
+    }
+    svg.style.display = "block";
+    const lineEl = svg.querySelector<SVGLineElement>("#preview-line");
+    const rectEl = svg.querySelector<SVGRectElement>("#preview-rect");
+    const ellipseEl = svg.querySelector<SVGEllipseElement>("#preview-ellipse");
+    const currentTool = toolRef.current;
+
+    if (lineEl) lineEl.style.display = currentTool === "line" ? "" : "none";
+    if (rectEl) rectEl.style.display = currentTool === "rect" ? "" : "none";
+    if (ellipseEl) ellipseEl.style.display = currentTool === "circle" ? "" : "none";
+
+    if (currentTool === "line" && lineEl) {
+      lineEl.setAttribute("x1", String(start.x * DISPLAY_SCALE + DISPLAY_SCALE / 2));
+      lineEl.setAttribute("y1", String(start.y * DISPLAY_SCALE + DISPLAY_SCALE / 2));
+      lineEl.setAttribute("x2", String(end.x * DISPLAY_SCALE + DISPLAY_SCALE / 2));
+      lineEl.setAttribute("y2", String(end.y * DISPLAY_SCALE + DISPLAY_SCALE / 2));
+    } else if (currentTool === "rect" && rectEl) {
+      const minX = Math.min(start.x, end.x), maxX = Math.max(start.x, end.x);
+      const minY = Math.min(start.y, end.y), maxY = Math.max(start.y, end.y);
+      rectEl.setAttribute("x", String(minX * DISPLAY_SCALE));
+      rectEl.setAttribute("y", String(minY * DISPLAY_SCALE));
+      rectEl.setAttribute("width", String((maxX - minX + 1) * DISPLAY_SCALE));
+      rectEl.setAttribute("height", String((maxY - minY + 1) * DISPLAY_SCALE));
+    } else if (currentTool === "circle" && ellipseEl) {
+      const cx = (start.x + end.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2;
+      const cy = (start.y + end.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2;
+      const rx = Math.abs(end.x - start.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2;
+      const ry = Math.abs(end.y - start.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2;
+      ellipseEl.setAttribute("cx", String(cx));
+      ellipseEl.setAttribute("cy", String(cy));
+      ellipseEl.setAttribute("rx", String(rx));
+      ellipseEl.setAttribute("ry", String(ry));
+    }
+  };
+
+  const handleCanvasMouseMoveRef = useRef<{ x: number; y: number } | null>(null);
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const pos = getPixelPos(e);
     if (!pos) return;
+    const curTool = toolRef.current;
 
-    if (tool === "eyedropper") {
+    if (curTool === "eyedropper") {
       const ctx = canvasRef.current?.getContext("2d");
       if (!ctx) return;
       const c = getPixelColor(ctx, pos.x, pos.y);
@@ -395,23 +420,25 @@ export function CursorEditor() {
       return;
     }
 
-    if (tool === "fill") {
+    if (curTool === "fill") {
       const ctx = canvasRef.current?.getContext("2d");
       if (!ctx) return;
-      floodFill(ctx, pos.x, pos.y, color);
+      floodFill(ctx, pos.x, pos.y, colorRef.current);
       const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
       saveToHistory(imageData);
       return;
     }
 
-    if (isShapeTool) {
-      setShapeStart(pos);
-      setShapePreview(pos);
+    if (curTool === "line" || curTool === "rect" || curTool === "circle") {
+      shapeStartRef.current = pos;
+      updateShapeOverlay(pos, pos);
       setIsDrawing(true);
+      isDrawingRef.current = true;
       return;
     }
 
     setIsDrawing(true);
+    isDrawingRef.current = true;
     lastPixel.current = null;
     const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return;
@@ -420,12 +447,22 @@ export function CursorEditor() {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const pos = getPixelPos(e);
-    setCursorPos(pos);
-    if (!isDrawing) return;
-    if (tool === "eyedropper" || tool === "fill") return;
+    handleCanvasMouseMoveRef.current = pos;
 
-    if (isShapeTool) {
-      setShapePreview(pos);
+    if (toolRef.current === "eyedropper") {
+      updateEyedropperOverlay(pos);
+      updateCursorOverlay(null);
+    } else {
+      updateCursorOverlay(pos);
+      updateEyedropperOverlay(null);
+    }
+
+    if (!isDrawingRef.current) return;
+
+    if (toolRef.current === "line" || toolRef.current === "rect" || toolRef.current === "circle") {
+      if (shapeStartRef.current && pos) {
+        updateShapeOverlay(shapeStartRef.current, pos);
+      }
       return;
     }
 
@@ -436,12 +473,15 @@ export function CursorEditor() {
   };
 
   const handleMouseUp = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (isShapeTool && isDrawing && shapeStart) {
-      const pos = getPixelPos(e) || shapeStart;
-      commitShape(shapeStart, pos);
-      setShapeStart(null);
-      setShapePreview(null);
-    } else if (isDrawing && canvasRef.current) {
+    const curTool = toolRef.current;
+    const isShape = curTool === "line" || curTool === "rect" || curTool === "circle";
+
+    if (isShape && isDrawingRef.current && shapeStartRef.current) {
+      const pos = getPixelPos(e) || shapeStartRef.current;
+      commitShape(shapeStartRef.current, pos);
+      shapeStartRef.current = null;
+      updateShapeOverlay(null, null);
+    } else if (isDrawingRef.current && canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -449,15 +489,20 @@ export function CursorEditor() {
       }
     }
     setIsDrawing(false);
+    isDrawingRef.current = false;
     lastPixel.current = null;
   };
 
   const handleCanvasLeave = () => {
-    if (isShapeTool && isDrawing && shapeStart && shapePreview) {
-      commitShape(shapeStart, shapePreview);
-      setShapeStart(null);
-      setShapePreview(null);
-    } else if (isDrawing && canvasRef.current) {
+    const curTool = toolRef.current;
+    const isShape = curTool === "line" || curTool === "rect" || curTool === "circle";
+
+    if (isShape && isDrawingRef.current && shapeStartRef.current) {
+      const lastPos = handleCanvasMouseMoveRef.current || shapeStartRef.current;
+      commitShape(shapeStartRef.current, lastPos);
+      shapeStartRef.current = null;
+      updateShapeOverlay(null, null);
+    } else if (isDrawingRef.current && canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
         const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -465,8 +510,10 @@ export function CursorEditor() {
       }
     }
     setIsDrawing(false);
+    isDrawingRef.current = false;
     lastPixel.current = null;
-    setCursorPos(null);
+    updateCursorOverlay(null);
+    updateEyedropperOverlay(null);
   };
 
   const handleClear = () => {
@@ -675,73 +722,46 @@ export function CursorEditor() {
                 cursor: "none",
               }}
             />
-            {cursorPos && tool !== "eyedropper" && (
-              <div
-                className="absolute pointer-events-none border border-white/70 rounded-sm"
-                style={{
-                  width: brushSize * DISPLAY_SCALE,
-                  height: brushSize * DISPLAY_SCALE,
-                  left: cursorPos.x * DISPLAY_SCALE - (brushSize * DISPLAY_SCALE) / 2,
-                  top: cursorPos.y * DISPLAY_SCALE - (brushSize * DISPLAY_SCALE) / 2,
-                  boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
-                  mixBlendMode: "difference",
-                }}
+            <div
+              ref={cursorOverlayRef}
+              className="absolute pointer-events-none border border-white/70 rounded-sm"
+              style={{
+                display: "none",
+                boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
+                mixBlendMode: "difference",
+              }}
+            />
+            <div
+              ref={cursorEyedropperRef}
+              className="absolute pointer-events-none w-5 h-5 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"
+              style={{
+                display: "none",
+                boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
+              }}
+            />
+            <svg
+              ref={shapeSvgRef}
+              width={DISPLAY_SIZE}
+              height={DISPLAY_SIZE}
+              className="absolute inset-0 pointer-events-none"
+              style={{ display: "none", mixBlendMode: "difference" }}
+            >
+              <line
+                id="preview-line"
+                x1={0} y1={0} x2={0} y2={0}
+                stroke="white" strokeWidth={1} strokeDasharray="4 2"
               />
-            )}
-            {cursorPos && tool === "eyedropper" && (
-              <div
-                className="absolute pointer-events-none w-5 h-5 border-2 border-white rounded-full -translate-x-1/2 -translate-y-1/2"
-                style={{
-                  left: cursorPos.x * DISPLAY_SCALE + DISPLAY_SCALE / 2,
-                  top: cursorPos.y * DISPLAY_SCALE + DISPLAY_SCALE / 2,
-                  boxShadow: "0 0 0 1px rgba(0,0,0,0.5)",
-                }}
+              <rect
+                id="preview-rect"
+                x={0} y={0} width={0} height={0}
+                fill="none" stroke="white" strokeWidth={1} strokeDasharray="4 2"
               />
-            )}
-            {isShapeTool && shapeStart && shapePreview && (
-              <svg
-                width={DISPLAY_SIZE}
-                height={DISPLAY_SIZE}
-                className="absolute inset-0 pointer-events-none"
-                style={{ mixBlendMode: "difference" }}
-              >
-                {tool === "line" && (
-                  <line
-                    x1={shapeStart.x * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    y1={shapeStart.y * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    x2={shapePreview.x * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    y2={shapePreview.y * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    stroke="white"
-                    strokeWidth={1}
-                    strokeDasharray="4 2"
-                  />
-                )}
-                {tool === "rect" && (
-                  <rect
-                    x={Math.min(shapeStart.x, shapePreview.x) * DISPLAY_SCALE}
-                    y={Math.min(shapeStart.y, shapePreview.y) * DISPLAY_SCALE}
-                    width={(Math.abs(shapePreview.x - shapeStart.x) + 1) * DISPLAY_SCALE}
-                    height={(Math.abs(shapePreview.y - shapeStart.y) + 1) * DISPLAY_SCALE}
-                    fill="none"
-                    stroke="white"
-                    strokeWidth={1}
-                    strokeDasharray="4 2"
-                  />
-                )}
-                {tool === "circle" && (
-                  <ellipse
-                    cx={(shapeStart.x + shapePreview.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    cy={(shapeStart.y + shapePreview.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    rx={Math.abs(shapePreview.x - shapeStart.x) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    ry={Math.abs(shapePreview.y - shapeStart.y) / 2 * DISPLAY_SCALE + DISPLAY_SCALE / 2}
-                    fill="none"
-                    stroke="white"
-                    strokeWidth={1}
-                    strokeDasharray="4 2"
-                  />
-                )}
-              </svg>
-            )}
+              <ellipse
+                id="preview-ellipse"
+                cx={0} cy={0} rx={0} ry={0}
+                fill="none" stroke="white" strokeWidth={1} strokeDasharray="4 2"
+              />
+            </svg>
             {showGrid && (
               <svg
                 width={DISPLAY_SIZE}
