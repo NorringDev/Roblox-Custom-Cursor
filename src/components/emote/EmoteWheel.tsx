@@ -10,7 +10,6 @@ import {
   RefreshCw,
   Trash2,
   Save,
-  Palette,
 } from "lucide-react";
 import { Header } from "../layout/Header";
 import { Card } from "../ui/Card";
@@ -24,8 +23,6 @@ interface CollectionItem {
   id: string;
   name: string;
   path: string;
-  borderColor: string;
-  borderWidth: number;
 }
 
 export function EmoteWheel() {
@@ -39,8 +36,6 @@ export function EmoteWheel() {
   const [isModified, setIsModified] = useState(false);
   const [applying, setApplying] = useState(false);
   const [restoring, setRestoring] = useState(false);
-  const [borderColor, setBorderColor] = useState("#ffffff");
-  const [borderWidth, setBorderWidth] = useState(0);
   const [collection, setCollection] = useState<CollectionItem[]>([]);
   const [saveName, setSaveName] = useState("");
   const [showSaveDialog, setShowSaveDialog] = useState(false);
@@ -89,20 +84,12 @@ export function EmoteWheel() {
     ctx.drawImage(imageObj, x, y, drawW, drawH);
     ctx.restore();
 
-    if (borderWidth > 0) {
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = borderWidth * (CANVAS_SIZE / 512) * 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius - ctx.lineWidth / 2, 0, Math.PI * 2);
-      ctx.stroke();
-    } else {
-      ctx.strokeStyle = "rgba(255,255,255,0.15)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius - 1, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-  }, [imageObj, zoom, offset, borderColor, borderWidth]);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, radius - 1, 0, Math.PI * 2);
+    ctx.stroke();
+  }, [imageObj, zoom, offset]);
 
   useEffect(() => {
     drawCanvas();
@@ -172,7 +159,7 @@ export function EmoteWheel() {
     if (!imageSrc) return;
     setApplying(true);
     try {
-      const result = await api.applyEmoteBg(imageSrc, zoom, offset.x, offset.y, borderColor, borderWidth);
+      const result = await api.applyEmoteBg(imageSrc, zoom, offset.x, offset.y);
       if (result.success) {
         addToast("success", "Emote wheel background applied!");
         setIsModified(true);
@@ -211,7 +198,7 @@ export function EmoteWheel() {
     if (!imageSrc || !saveName.trim()) return;
     try {
       const result = await api.saveEmoteBgCollection(
-        saveName.trim(), imageSrc, zoom, offset.x, offset.y, borderColor, borderWidth
+        saveName.trim(), imageSrc, zoom, offset.x, offset.y
       );
       if (result.success) {
         addToast("success", result.message);
@@ -334,35 +321,6 @@ export function EmoteWheel() {
 
             {imageObj && (
               <>
-                <div className="pt-3 border-t border-surface-700/50">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Palette size={14} className="text-surface-400" />
-                    <span className="text-xs font-medium text-surface-400">Border</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={borderColor}
-                        onChange={(e) => setBorderColor(e.target.value)}
-                        className="w-8 h-8 rounded-lg border border-surface-600 cursor-pointer bg-transparent"
-                      />
-                      <span className="text-xs text-surface-500">{borderColor}</span>
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        type="range"
-                        min={0}
-                        max={20}
-                        value={borderWidth}
-                        onChange={(e) => setBorderWidth(Number(e.target.value))}
-                        className="w-full h-1.5 bg-surface-700 rounded-lg appearance-none cursor-pointer accent-brand-500"
-                      />
-                      <span className="text-[10px] text-surface-600">{borderWidth}px</span>
-                    </div>
-                  </div>
-                </div>
-
                 <Button
                   variant="primary"
                   size="md"
@@ -460,7 +418,7 @@ export function EmoteWheel() {
                 key={item.id}
                 className="relative group bg-surface-800/50 border border-surface-700/50 rounded-xl p-3 flex flex-col items-center gap-2"
               >
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2" style={{ borderColor: item.borderColor || "transparent" }}>
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-surface-600">
                   <img
                     src={convertFileSrc(item.path)}
                     alt={item.name}

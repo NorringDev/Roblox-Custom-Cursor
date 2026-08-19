@@ -36,35 +36,28 @@ fn render_emote_bg(
     zoom: f64,
     offset_x: f64,
     offset_y: f64,
-    border_color: &str,
-    border_width: u32,
 ) -> Result<RgbaImage, String> {
     let src = PathBuf::from(source_path);
     let img = image::open(&src)
         .map_err(|e| format!("Failed to open image: {}", e))?;
     let img = img.to_rgba8();
 
-    let border_w = if border_width > 0 { border_width } else { 0 };
-    let inner_size: u32 = 512;
-    let canvas_size: u32 = inner_size + border_w * 2;
+    let canvas_size: u32 = 512;
     let mut output = RgbaImage::new(canvas_size, canvas_size);
 
     let img_w = img.width() as f64;
     let img_h = img.height() as f64;
-    let base_scale = (inner_size as f64 / img_w).max(inner_size as f64 / img_h);
+    let base_scale = (canvas_size as f64 / img_w).max(canvas_size as f64 / img_h);
     let scale = base_scale * zoom;
     let draw_w = img_w * scale;
     let draw_h = img_h * scale;
 
     let cx = canvas_size as f64 / 2.0;
     let cy = canvas_size as f64 / 2.0;
-    let radius = inner_size as f64 / 2.0;
-    let outer_radius = radius + border_w as f64;
+    let radius = canvas_size as f64 / 2.0;
 
     let draw_x = cx + offset_x - draw_w / 2.0;
     let draw_y = cy + offset_y - draw_h / 2.0;
-
-    let border_rgba = parse_color(border_color);
 
     for py in 0..canvas_size {
         for px in 0..canvas_size {
@@ -72,44 +65,20 @@ fn render_emote_bg(
             let dy = py as f64 - cy;
             let dist = (dx * dx + dy * dy).sqrt();
 
-            if dist > outer_radius {
+            if dist > radius {
                 continue;
             }
 
-            if border_w > 0 && dist > radius {
-                output.put_pixel(px, py, Rgba([border_rgba[0], border_rgba[1], border_rgba[2], border_rgba[3]]));
-            } else {
-                let src_x = (px as f64 - draw_x) / scale;
-                let src_y = (py as f64 - draw_y) / scale;
-                let clamped_x = src_x.max(0.0).min(img_w - 1.0);
-                let clamped_y = src_y.max(0.0).min(img_h - 1.0);
-                let pixel = sample_bilinear(&img, clamped_x, clamped_y);
-                output.put_pixel(px, py, pixel);
-            }
+            let src_x = (px as f64 - draw_x) / scale;
+            let src_y = (py as f64 - draw_y) / scale;
+            let clamped_x = src_x.max(0.0).min(img_w - 1.0);
+            let clamped_y = src_y.max(0.0).min(img_h - 1.0);
+            let pixel = sample_bilinear(&img, clamped_x, clamped_y);
+            output.put_pixel(px, py, pixel);
         }
     }
 
     Ok(output)
-}
-
-fn parse_color(color: &str) -> [u8; 4] {
-    let c = color.trim_start_matches('#');
-    match c.len() {
-        6 => {
-            let r = u8::from_str_radix(&c[0..2], 16).unwrap_or(255);
-            let g = u8::from_str_radix(&c[2..4], 16).unwrap_or(255);
-            let b = u8::from_str_radix(&c[4..6], 16).unwrap_or(255);
-            [r, g, b, 255]
-        }
-        8 => {
-            let r = u8::from_str_radix(&c[0..2], 16).unwrap_or(255);
-            let g = u8::from_str_radix(&c[2..4], 16).unwrap_or(255);
-            let b = u8::from_str_radix(&c[4..6], 16).unwrap_or(255);
-            let a = u8::from_str_radix(&c[6..8], 16).unwrap_or(255);
-            [r, g, b, a]
-        }
-        _ => [255, 255, 255, 255],
-    }
 }
 
 fn get_collection_dir() -> PathBuf {
@@ -130,8 +99,6 @@ pub fn apply_emote_bg(
     zoom: f64,
     offset_x: f64,
     offset_y: f64,
-    border_color: String,
-    border_width: u32,
 ) -> Result<CommandResult, String> {
     let versions_dir =
         roblox_detector::get_roblox_versions_dir(None).ok_or("Roblox not found. Please check Settings.")?;
@@ -153,7 +120,7 @@ pub fn apply_emote_bg(
 
     let emote_bg_dest = roblox_detector::get_emote_bg_path(&version_path);
 
-    let output = render_emote_bg(&source_path, zoom, offset_x, offset_y, &border_color, border_width)?;
+    let output = render_emote_bg(&source_path, zoom, offset_x, offset_y)?;
 
     output.save(&emote_bg_dest)
         .map_err(|e| format!("Failed to save emote background: {}", e))?;
@@ -236,13 +203,11 @@ pub fn save_emote_bg_collection(
     zoom: f64,
     offset_x: f64,
     offset_y: f64,
-    border_color: String,
-    border_width: u32,
 ) -> Result<CommandResult, String> {
     let collection_dir = ensure_collection_dir()?;
     let id = uuid::Uuid::new_v4().to_string();
 
-    let output = render_emote_bg(&source_path, zoom, offset_x, offset_y, &border_color, border_width)?;
+    let output = render_emote_bg(&source_path, zoom, offset_x, offset_y)?;
 
     let img_path = collection_dir.join(format!("{}.png", id));
     output.save(&img_path)
@@ -255,8 +220,6 @@ pub fn save_emote_bg_collection(
         "zoom": zoom,
         "offset_x": offset_x,
         "offset_y": offset_y,
-        "border_color": border_color,
-        "border_width": border_width,
     });
     let meta_path = collection_dir.join(format!("{}.json", id));
     std::fs::write(&meta_path, serde_json::to_string_pretty(&meta).unwrap())
@@ -286,8 +249,6 @@ pub fn get_emote_bg_collection() -> Result<Vec<serde_json::Value>, String> {
                                 "id": id,
                                 "name": meta["name"].as_str().unwrap_or("Unknown"),
                                 "path": img_path.to_string_lossy(),
-                                "border_color": meta["border_color"].as_str().unwrap_or("#ffffff"),
-                                "border_width": meta["border_width"].as_u64().unwrap_or(0),
                             }));
                         }
                     }

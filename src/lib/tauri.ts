@@ -101,10 +101,8 @@ export async function applyEmoteBg(
   zoom: number,
   offsetX: number,
   offsetY: number,
-  borderColor: string,
-  borderWidth: number
 ): Promise<{ success: boolean; message: string }> {
-  return invoke("apply_emote_bg", { sourcePath, zoom, offsetX, offsetY, borderColor, borderWidth });
+  return invoke("apply_emote_bg", { sourcePath, zoom, offsetX, offsetY });
 }
 
 export async function restoreEmoteBg(): Promise<{ success: boolean; message: string }> {
@@ -121,13 +119,11 @@ export async function saveEmoteBgCollection(
   zoom: number,
   offsetX: number,
   offsetY: number,
-  borderColor: string,
-  borderWidth: number
 ): Promise<{ success: boolean; message: string }> {
-  return invoke("save_emote_bg_collection", { name, sourcePath, zoom, offsetX, offsetY, borderColor, borderWidth });
+  return invoke("save_emote_bg_collection", { name, sourcePath, zoom, offsetX, offsetY });
 }
 
-export async function getEmoteBgCollection(): Promise<{ id: string; name: string; path: string; borderColor: string; borderWidth: number }[]> {
+export async function getEmoteBgCollection(): Promise<{ id: string; name: string; path: string }[]> {
   return invoke("get_emote_bg_collection");
 }
 
