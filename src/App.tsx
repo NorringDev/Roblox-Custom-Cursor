@@ -6,7 +6,6 @@ import { Premade } from "./components/premade/Premade";
 import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
 import { EmoteWheel } from "./components/emote/EmoteWheel";
-import { MultiInstance } from "./components/multi-instance/MultiInstance";
 import { ToastContainer } from "./components/ui/Toast";
 import { WhatsNewModal } from "./components/ui/WhatsNewModal";
 import { useUIStore } from "./stores/uiStore";
@@ -77,8 +76,6 @@ function App() {
         return <Library />;
       case "emote-wheel":
         return <EmoteWheel />;
-      case "multi-instance":
-        return <MultiInstance />;
       case "premade":
         return <Premade />;
       case "settings":

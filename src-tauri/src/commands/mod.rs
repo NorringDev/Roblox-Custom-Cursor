@@ -4,4 +4,3 @@ pub mod library;
 pub mod settings;
 pub mod premade;
 pub mod emote_wheel;
-pub mod multi_instance;

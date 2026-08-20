@@ -8,7 +8,6 @@ import {
   Sparkles,
   Clock,
   Circle,
-  Users,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
@@ -18,7 +17,6 @@ const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "emote-wheel", label: "Emote Wheel", icon: Circle },
-  { id: "multi-instance", label: "Multi-Instance", icon: Users },
   { id: "premade", label: "Premade", icon: Sparkles },
   { id: "coming-soon", label: "More Coming Soon", icon: Clock },
   { id: "settings", label: "Settings", icon: Settings },

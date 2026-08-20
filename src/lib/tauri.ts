@@ -134,11 +134,3 @@ export async function deleteEmoteBgCollection(id: string): Promise<{ success: bo
 export async function applyEmoteBgCollection(id: string): Promise<{ success: boolean; message: string }> {
   return invoke("apply_emote_bg_collection", { id });
 }
-
-export async function getMultiInstanceStatus(): Promise<{ enabled: boolean }> {
-  return invoke("get_multi_instance_status");
-}
-
-export async function toggleMultiInstance(enable: boolean): Promise<{ success: boolean; message: string }> {
-  return invoke("toggle_multi_instance", { enable });
-}

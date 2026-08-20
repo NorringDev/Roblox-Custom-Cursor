@@ -8,8 +8,8 @@ interface WhatsNewModalProps {
 }
 
 const latestChanges = [
-  "Multi-Instance: Run multiple Roblox accounts simultaneously",
   "Renamed to Roblox Modifier",
+  "Improved emote wheel background changer",
   "Bug fixes and improvements",
 ];
 
