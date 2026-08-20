@@ -1,10 +1,10 @@
 {
   "version": "1.3.0",
   "notes": "Renamed to Roblox Modifier. Credits modal with Discord username.",
-  "pub_date": "2026-08-20T15:00:00Z",
+  "pub_date": "2026-08-20T15:30:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0VxbW9Ja0Zad04xZ0JqM1RQb0dLa3JFMmh3bS9qdWNaampBU3Jqd2RFWUU2WHZUMU9vVUdQS3dBSWRhSHY1VU5ZY3Jhek93eG5CYmR1dDFhTXNERHc4PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjQ4MDk3CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMy4wX3g2NC1zZXR1cC5leGUKeEtUZitlK1AySjlqWW0xL045Z1RuS0hNYnRReElkeEF3UEJhRkc3SWRoV0dHQUxMQlVxTE9DSTBqb0l3OEZBSk5sa3djNXBYRnZLTEVUcTk3STZWQVE9PQo=",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0ZJQTNSY1ZYQTM2dVMrT0gxRnpMQW5VU1M5RGkwdUZpbklUUFFWcjdaN3pyMEpoZFJQZzBzUCt4YmVFb056aStSS3h2RWxrNTJqNVViVHFuU1lhTkFvPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjQ4NTQ1CWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMy4wX3g2NC1zZXR1cC5leGUKdGtPdjJBYkZIWldrODZjS0FzY2MzRXczTTFGZ1RBQmlMbEQ0NVVVUWNiOERTUWtDWUp5QmpKZFg1NzRnWFhaZTJacHdNVHBDYU1zSVozdXkySVVjQWc9PQo=",
       "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.3.0/Roblox.Crosshair.Manager_1.3.0_x64-setup.exe"
     }
   }
