@@ -1,11 +1,11 @@
 {
   "version": "1.3.0",
   "notes": "Renamed to Roblox Modifier. Removed multi-instance and Create Cursor features.",
-  "pub_date": "2026-08-20T12:30:00Z",
+  "pub_date": "2026-08-20T13:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV09JRzNQYnZPV0dzZkE1amovRDNvQmtIc2JQN2gxN0dPVzlnVTZHRGRhaXBCK2tXTThtMzNuM0FTZEptTTc4TUh6dUVmU2hKdnVOTTl4S2NOaHREcXc0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjQxMjUxCWZpbGU6Um9ibG94IE1vZGlmaWVyXzEuMy4wX3g2NC1zZXR1cC5leGUKZytKSVBtK0ZaSUk2b3VNYjRJQVZ5Y3poclZsQUxtNVE5Z3grOVcwS1ZzalJtdEZsYkpmSDVTaUVYNEVBalRpU3pncGlEUmxVcmJzOGtML2VVNVY2Qmc9PQo=",
-      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.3.0/Roblox.Modifier_1.3.0_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV051c1dvRmpNNnF2QmlLSUZHT2RSbFptcEVJQWlIRVhPTHIvQWwrbzRSM1dJNGd5RlczYmkxRTZWVGcvYmpNOVhIKytleThDa2lMaGVHaU9lR1ltekF3PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjQyMDIxCWZpbGU6Um9ibG94IENyb3NzaGFpciBNYW5hZ2VyXzEuMy4wX3g2NC1zZXR1cC5leGUKTEdWeTZ2bHJ2amR5WHVvQklNRHA3emtIblJmSzhpVkdITkZaK21OOVkvekxLZ1k0RVFsK05ja0dlQnBNV2NKV0hyVXFpT1A0SzYyZ1pMZVlRdHlvREE9PQo=",
+      "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.3.0/Roblox.Crosshair.Manager_1.3.0_x64-setup.exe"
     }
   }
 }
