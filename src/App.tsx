@@ -7,6 +7,7 @@ import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
 import { CursorEditor } from "./components/editor/CursorEditor";
 import { EmoteWheel } from "./components/emote/EmoteWheel";
+import { MultiInstance } from "./components/multi-instance/MultiInstance";
 import { ToastContainer } from "./components/ui/Toast";
 import { WhatsNewModal } from "./components/ui/WhatsNewModal";
 import { useUIStore } from "./stores/uiStore";
@@ -33,7 +34,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const CURRENT_VERSION = "1.2.4";
+    const CURRENT_VERSION = "1.3.0";
     const lastSeen = localStorage.getItem("whatsnew_version");
     if (lastSeen !== CURRENT_VERSION) {
       setShowWhatsNew(true);
@@ -79,6 +80,8 @@ function App() {
         return <CursorEditor />;
       case "emote-wheel":
         return <EmoteWheel />;
+      case "multi-instance":
+        return <MultiInstance />;
       case "premade":
         return <Premade />;
       case "settings":

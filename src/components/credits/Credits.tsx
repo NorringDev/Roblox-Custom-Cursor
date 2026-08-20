@@ -47,9 +47,10 @@ export function Credits() {
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-surface-100">About</h3>
           <p className="text-sm text-surface-400 leading-relaxed">
-            Roblox Crosshair Manager is a tool that lets you easily import,
-            preview, and apply custom crosshairs to Roblox without manually
-            editing game files. It handles backups and restoration automatically.
+            Roblox Modifier is a tool that lets you easily import,
+            preview, and apply custom crosshairs to Roblox, customize your
+            emote wheel, and run multiple Roblox accounts simultaneously.
+            It handles backups and restoration automatically.
           </p>
           <div className="flex items-center gap-2 text-xs text-surface-600 pt-2">
             <span>Built with</span>

@@ -9,6 +9,7 @@ import {
   PenTool,
   Clock,
   Circle,
+  Users,
 } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { useUIStore } from "../../stores/uiStore";
@@ -19,6 +20,7 @@ const navItems = [
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
   { id: "editor", label: "Create Cursor (Beta)", icon: PenTool },
   { id: "emote-wheel", label: "Emote Wheel", icon: Circle },
+  { id: "multi-instance", label: "Multi-Instance", icon: Users },
   { id: "premade", label: "Premade", icon: Sparkles },
   { id: "coming-soon", label: "More Coming Soon", icon: Clock },
   { id: "settings", label: "Settings", icon: Settings },
@@ -41,10 +43,10 @@ export function Sidebar() {
         </div>
         <div>
           <h1 className="text-sm font-bold text-surface-100 leading-tight">
-            Crosshair
+            Roblox
           </h1>
           <p className="text-[10px] text-surface-500 leading-tight">
-            Manager
+            Modifier
           </p>
         </div>
       </div>
@@ -77,7 +79,7 @@ export function Sidebar() {
 
       <div className="p-4 border-t border-surface-800/50">
         <p className="text-[10px] text-surface-600 text-center">
-          Roblox Crosshair Manager
+          Roblox Modifier
         </p>
         <p className="text-[10px] text-surface-700 text-center">v{version}</p>
       </div>

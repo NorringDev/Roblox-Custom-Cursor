@@ -8,9 +8,9 @@ interface WhatsNewModalProps {
 }
 
 const latestChanges = [
-  "Emote Wheel Background changer - customize the emote wheel with any image",
-  "Circle crop editor with zoom and pan controls",
-  "One-click apply and restore for emote wheel background",
+  "Multi-Instance: Run multiple Roblox accounts simultaneously",
+  "Renamed to Roblox Modifier",
+  "Bug fixes and improvements",
 ];
 
 export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
@@ -48,7 +48,7 @@ export function WhatsNewModal({ open, onClose }: WhatsNewModalProps) {
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-brand-400" />
                 <h2 className="text-sm font-semibold text-surface-100">
-                  What's New in v1.2.4
+                  What's New in v1.3.0
                 </h2>
               </div>
               <button

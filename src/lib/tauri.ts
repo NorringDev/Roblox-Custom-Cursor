@@ -134,3 +134,27 @@ export async function deleteEmoteBgCollection(id: string): Promise<{ success: bo
 export async function applyEmoteBgCollection(id: string): Promise<{ success: boolean; message: string }> {
   return invoke("apply_emote_bg_collection", { id });
 }
+
+export async function createInstance(name: string): Promise<{ success: boolean; message: string }> {
+  return invoke("create_instance", { name });
+}
+
+export async function launchInstance(id: string): Promise<{ success: boolean; message: string }> {
+  return invoke("launch_instance", { id });
+}
+
+export async function stopInstance(id: string): Promise<{ success: boolean; message: string }> {
+  return invoke("stop_instance", { id });
+}
+
+export async function getInstances(): Promise<{ id: string; name: string; created_at: string; status: string; pid: number | null }[]> {
+  return invoke("get_instances");
+}
+
+export async function deleteInstance(id: string): Promise<{ success: boolean; message: string }> {
+  return invoke("delete_instance", { id });
+}
+
+export async function getMultiInstanceStatus(): Promise<{ total: number; running: number }> {
+  return invoke("get_multi_instance_status");
+}
