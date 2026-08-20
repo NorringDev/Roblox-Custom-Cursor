@@ -6,7 +6,6 @@ import {
   Heart,
   Target,
   Sparkles,
-  PenTool,
   Clock,
   Circle,
   Users,
@@ -18,7 +17,6 @@ import { cn } from "../../lib/utils";
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "library", label: "My Crosshairs", icon: FolderOpen },
-  { id: "editor", label: "Create Cursor (Beta)", icon: PenTool },
   { id: "emote-wheel", label: "Emote Wheel", icon: Circle },
   { id: "multi-instance", label: "Multi-Instance", icon: Users },
   { id: "premade", label: "Premade", icon: Sparkles },

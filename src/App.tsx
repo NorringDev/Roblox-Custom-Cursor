@@ -5,7 +5,6 @@ import { Library } from "./components/library/Library";
 import { Premade } from "./components/premade/Premade";
 import { Settings } from "./components/settings/Settings";
 import { Credits } from "./components/credits/Credits";
-import { CursorEditor } from "./components/editor/CursorEditor";
 import { EmoteWheel } from "./components/emote/EmoteWheel";
 import { MultiInstance } from "./components/multi-instance/MultiInstance";
 import { ToastContainer } from "./components/ui/Toast";
@@ -76,8 +75,6 @@ function App() {
         return <Dashboard />;
       case "library":
         return <Library />;
-      case "editor":
-        return <CursorEditor />;
       case "emote-wheel":
         return <EmoteWheel />;
       case "multi-instance":
