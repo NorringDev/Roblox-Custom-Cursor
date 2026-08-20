@@ -1,10 +1,10 @@
 {
   "version": "1.3.0",
-  "notes": "Multi-Instance support - run multiple Roblox accounts simultaneously. App renamed to Roblox Modifier.",
-  "pub_date": "2026-08-20T10:00:00Z",
+  "notes": "Multi-Instance toggle - run multiple Roblox accounts simultaneously. Removed Create Cursor feature.",
+  "pub_date": "2026-08-20T12:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0ZjSGVybXNlRkpsK3o3ZjJzam1HRTlOY085T1ZYY3ZoTFpjSHdybjYrODB3Vmo0elNsdDhrNys0VjlwcVFMUXNCVXBEeU5wczBQb3JnTEE2Y1dVaFFBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjM5NzM5CWZpbGU6Um9ibG94IE1vZGlmaWVyXzEuMy4wX3g2NC1zZXR1cC5leGUKM3JMUEZwcVQ1blVDWVU0ZHBnVnp1MlFxVSsyMFVNMFFLekMzRkxNODl2L2JQN3JveTdFTmhYM1NYaGJjZENOUUNEMlVqbVl3STQxR2FkUGxjZER0QWc9PQo=",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUOXU4RVhiZE5VV0s2Yng0aWdZbmN3bnFXcUJXTXZOWEh2ZncrZ2U5UVh3Z1VpZ3dGVzRnS2pmVCtqdHRwV0c0bDV1ZTRQVmRHQ1kwUXAwaXRycHNXY0xscWpwR2JIZEE0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg3MjQwNTc4CWZpbGU6Um9ibG94IE1vZGlmaWVyXzEuMy4wX3g2NC1zZXR1cC5leGUKQmw0SzRZNkt3RGp4bkhIRSt0U2Zvb1lQM0xNRlZ2R2Y3T01MYjIzTjRFS1QrZHNCV3ozcThib0pJSlJrWjBDRmsvOE1oSlhMc3RjajU1cDM5NCtrQ1E9PQo=",
       "url": "https://github.com/NorringDev/Roblox-Custom-Cursor/releases/download/v1.3.0/Roblox.Modifier_1.3.0_x64-setup.exe"
     }
   }
