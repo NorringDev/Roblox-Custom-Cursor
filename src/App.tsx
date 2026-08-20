@@ -61,8 +61,9 @@ function App() {
             });
           }, 1500);
         }
-      } catch {
-        // silently ignore
+      } catch (e) {
+        console.error("Update check failed:", e);
+        addToast("error", "Update check failed: " + String(e));
       }
     };
     checkForUpdates();
