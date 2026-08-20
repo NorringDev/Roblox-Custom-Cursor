@@ -1,21 +1,22 @@
 import { useState, useEffect } from "react";
-import { Heart, ExternalLink } from "lucide-react";
+import { Heart, Copy, Check } from "lucide-react";
 import { getVersion } from "@tauri-apps/api/app";
 import { Header } from "../layout/Header";
 import { Card } from "../ui/Card";
 
 export function Credits() {
   const [version, setVersion] = useState("");
-  const [showDiscord, setShowDiscord] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     getVersion().then(setVersion).catch(() => {});
   }, []);
 
-  const copyDiscord = () => {
+  const handleCopy = () => {
     navigator.clipboard.writeText("norring").then(() => {
-      setShowDiscord(true);
-      setTimeout(() => setShowDiscord(false), 2000);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
     });
   };
 
@@ -30,20 +31,14 @@ export function Credits() {
           </div>
           <div>
             <button
-              onClick={copyDiscord}
-              className="text-lg font-bold text-surface-100 hover:text-brand-400 transition-colors cursor-pointer flex items-center gap-2"
+              onClick={() => setShowModal(true)}
+              className="text-lg font-bold text-surface-100 hover:text-brand-400 transition-colors cursor-pointer"
             >
               Norring
-              <ExternalLink size={14} className="text-surface-500" />
             </button>
             <p className="text-sm text-surface-400">
               Developer & Creator
             </p>
-            {showDiscord && (
-              <p className="text-xs text-green-400 mt-1">
-                Discord username copied: norring
-              </p>
-            )}
           </div>
         </div>
       </Card>
@@ -67,6 +62,50 @@ export function Credits() {
           <p className="text-xs text-surface-600">Version {version}</p>
         </div>
       </Card>
+
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative w-full max-w-sm bg-surface-900 border border-surface-700/50 rounded-2xl shadow-2xl p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-brand-600/15 flex items-center justify-center">
+                <Heart size={22} className="text-brand-400" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-surface-100">Norring</h3>
+                <p className="text-xs text-surface-500">Developer & Creator</p>
+              </div>
+            </div>
+
+            <div className="bg-surface-800/50 rounded-xl p-3 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] text-surface-500 uppercase tracking-wide mb-0.5">Discord</p>
+                <p className="text-sm font-medium text-surface-200">norring</p>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="p-2 rounded-lg hover:bg-surface-700 transition-colors cursor-pointer"
+              >
+                {copied ? (
+                  <Check size={16} className="text-green-400" />
+                ) : (
+                  <Copy size={16} className="text-surface-400" />
+                )}
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowModal(false)}
+              className="mt-4 w-full py-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-surface-300 text-sm font-medium transition-colors cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
